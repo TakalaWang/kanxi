@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@theme {
+	--color-curtain-50: #fdf3f3;
+	--color-curtain-100: #fbe5e6;
+	--color-curtain-500: #b3252f;
+	--color-curtain-600: #991b25;
+	--color-curtain-700: #7a151f;
+	--color-curtain-900: #2a0a0d;
+}
+
+:root {
+	color-scheme: light;
+}
+
+html {
+	font-family:
+		'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', 'PingFang TC',
+		'Microsoft JhengHei', sans-serif;
+	background: var(--color-curtain-50);
+	color: #1a1a1a;
+	-webkit-font-smoothing: antialiased;
+}
