@@ -228,6 +228,7 @@ export async function scrapeAccupass(): Promise<Show[]> {
 				imageUrl,
 				url: EVENT_URL(id),
 				description,
+				notes: null,
 				organizer,
 				sessions: [] as Session[]
 			});

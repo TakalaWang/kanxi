@@ -70,6 +70,35 @@ export function htmlToText(html: string | null | undefined): string | null {
 	return text || null;
 }
 
+/**
+ * Pull a few curated, show-specific highlights out of a detail page's notes
+ * (which are mostly generic payment/refund boilerplate). We keep only the bits
+ * a theatre-goer actually wants — running time and recommended age — and drop
+ * the rest, so the surfaced text is tidied rather than pasted wholesale.
+ */
+export function extractHighlights(text: string | null | undefined): string | null {
+	if (!text) return null;
+	const t = text.replace(/\s+/g, ' ');
+	const parts: string[] = [];
+
+	// Running time: 演出長度約150分鐘 / 全長 60 分鐘 / 演出時間約 90 分鐘（含中場休息20分鐘）
+	const dur = t.match(
+		/(?:演出長度|演出時間|節目長度|全長|片長)[約為：: ]*((?:約\s*)?\d{1,3}\s*分鐘(?:\s*[（(][^）)]*中場[^）)]*[）)])?)/
+	);
+	if (dur) {
+		const d = dur[1].replace(/\s+/g, '');
+		parts.push(`演出長度${d.startsWith('約') ? '' : '約'}${d}`);
+	}
+
+	// Recommended age: 建議觀賞年齡：8歲以上 / 建議6歲以上觀賞 / 7歲以上觀眾入場
+	const age = t.match(
+		/建議(?:觀賞)?(?:年齡[：: ]*)?([\d一二兩三四五六七八九十]{1,3}\s*歲(?:以上)?)/
+	);
+	if (age) parts.push(`建議${age[1].replace(/\s+/g, '')}觀賞`);
+
+	return parts.length ? parts.join(' · ') : null;
+}
+
 /** Extract the on-sale time from text. Returns ISO at day granularity. */
 export function extractOnSale(text: string): string | null {
 	const idx = text.search(/開賣|售票時間|啟售|開始售票/);

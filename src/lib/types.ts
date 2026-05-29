@@ -47,8 +47,10 @@ export interface Show {
 	imageUrl: string | null;
 	/** Link back to the original ticketing page. */
 	url: string;
-	/** Program description (currently OPENTIX only). */
+	/** Program description (artistic intro). */
 	description: string | null;
+	/** Curated highlights pulled from the detail page's notes (e.g. duration, age guidance). */
+	notes: string | null;
 	/** Organizer. */
 	organizer: string | null;
 	/** Per-session / per-venue details (currently OPENTIX only). */

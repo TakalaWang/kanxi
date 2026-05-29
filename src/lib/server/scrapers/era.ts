@@ -7,6 +7,7 @@ import {
 	classifyGenre,
 	cityFromText,
 	htmlToText,
+	extractHighlights,
 	firstDate,
 	extractPriceRange,
 	dateRangeFromDates
@@ -70,6 +71,7 @@ export async function scrapeEra(): Promise<Show[]> {
 		let minPrice: number | null = null;
 		let maxPrice: number | null = null;
 		let description: string | null = null;
+		let notes: string | null = null;
 		let organizer: string | null = null;
 		let rawSessions: EraSession[] = [];
 
@@ -88,6 +90,8 @@ export async function scrapeEra(): Promise<Show[]> {
 				);
 				organizer =
 					root.querySelector('#ctl00_ContentPlaceHolder1_lbOrgName')?.text.trim() || null;
+				// Running time / age live in the "注意事項" tab pane.
+				notes = extractHighlights(root.querySelector('.contents.tab-content')?.text);
 				await sleep(700);
 			} catch {
 				/* keep list-only data */
@@ -124,6 +128,7 @@ export async function scrapeEra(): Promise<Show[]> {
 			imageUrl: item.img,
 			url: DETAIL_URL(item.id),
 			description,
+			notes,
 			organizer,
 			sessions: cleanSessions
 		});

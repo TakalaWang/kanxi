@@ -129,6 +129,11 @@
 					<dt class="text-gray-400">主辦</dt>
 					<dd class="text-gray-800 dark:text-gray-200">{show.organizer}</dd>
 				{/if}
+				{#if show.notes}
+					<Icon name="clock" size={16} class="text-curtain-500" />
+					<dt class="text-gray-400">演出資訊</dt>
+					<dd class="text-gray-800 dark:text-gray-200">{show.notes}</dd>
+				{/if}
 			</dl>
 
 			<div class="flex flex-wrap gap-2">

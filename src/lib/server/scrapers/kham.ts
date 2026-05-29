@@ -7,6 +7,7 @@ import {
 	classifyGenre,
 	cityFromText,
 	htmlToText,
+	extractHighlights,
 	firstDate,
 	dateRangeFromDates
 } from './util';
@@ -62,6 +63,7 @@ export async function scrapeKham(): Promise<Show[]> {
 		let city: string | null = null;
 		let onSaleAt: string | null = null;
 		let description: string | null = null;
+		let notes: string | null = null;
 		let sessions: Session[] = [];
 
 		if (!fast) {
@@ -71,7 +73,11 @@ export async function scrapeKham(): Promise<Show[]> {
 				const desc = root.querySelector('meta[name=description]')?.getAttribute('content') ?? '';
 				sessions = parseKhamSessions(desc);
 				onSaleAt = extractOnSale(root.text);
-				description = htmlToText(root.querySelector('#showInfo')?.innerHTML);
+				// #showInfo concatenates every tab (注意事項/購票/…); the actual program
+				// intro lives in the #divbtn01 panel (often an image, so text may be empty).
+				description = htmlToText(root.querySelector('#divbtn01')?.innerHTML);
+				// Running time / age live in the "注意事項" panel (#divbtn02).
+				notes = extractHighlights(root.querySelector('#divbtn02')?.text);
 				await sleep(500);
 			} catch {
 				/* on detail failure, keep just the list data */
@@ -102,6 +108,7 @@ export async function scrapeKham(): Promise<Show[]> {
 			imageUrl: item.image,
 			url: DETAIL_URL(item.id),
 			description,
+			notes,
 			organizer: null,
 			sessions
 		});
