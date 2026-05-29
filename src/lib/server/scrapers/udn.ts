@@ -1,6 +1,6 @@
 import { parse } from 'node-html-parser';
 import type { Show } from '../../types';
-import { politeFetch, classifyGenre } from './util';
+import { politeFetch, sleep, classifyGenre, parseUtikiDetail } from './util';
 
 const API =
 	'https://tickets.udnfunlife.com/Application/UTK01/UTK0101_009.aspx/Product_Category_List';
@@ -20,6 +20,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 	if (!html) return [];
 
 	const root = parse(html);
+	const fast = process.env.ONSTAGE_FAST === '1';
 	const shows: Show[] = [];
 	for (const card of root.querySelectorAll('.yd_card')) {
 		const link = card.querySelector('a[href]');
@@ -35,14 +36,27 @@ export async function scrapeUdn(): Promise<Show[]> {
 			card.querySelector('meta[itemprop=startDate]')?.getAttribute('content') ?? null;
 		const endDate =
 			card.querySelector('meta[itemprop=endDate]')?.getAttribute('content') ?? null;
-		const venue =
+		let venue =
 			card.querySelector('[itemprop=location] [itemprop=name]')?.text.trim() ||
 			card.querySelector('[itemprop=location]')?.text.trim() ||
 			null;
-		const priceStr = card
-			.querySelector('meta[itemprop=price]')
-			?.getAttribute('content');
-		const minPrice = priceStr ? Number(priceStr.replace(/[^\d]/g, '')) || null : null;
+		const priceStr = card.querySelector('meta[itemprop=price]')?.getAttribute('content');
+		let minPrice = priceStr ? Number(priceStr.replace(/[^\d]/g, '')) || null : null;
+		let onSaleAt: string | null = null;
+
+		// Enrich on-sale time (and any missing venue/price) from the detail page.
+		if (!fast) {
+			try {
+				const d = await politeFetch(DETAIL_URL(id));
+				const detail = parseUtikiDetail(await d.text());
+				onSaleAt = detail.onSaleAt;
+				venue = venue ?? detail.venue;
+				minPrice = minPrice ?? detail.minPrice;
+				await sleep(400);
+			} catch {
+				/* keep list-only data */
+			}
+		}
 
 		shows.push({
 			id: `udn:${id}`,
@@ -54,7 +68,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 			endDate: endDate?.slice(0, 10) ?? null,
 			venue,
 			city: null,
-			onSaleAt: null, // on-sale time only on the detail page; not fetched per item
+			onSaleAt,
 			minPrice,
 			maxPrice: null,
 			imageUrl: img,

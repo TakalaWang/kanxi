@@ -1,5 +1,6 @@
 /** Shared scraper helpers: polite fetch, date parsing, HTML cleanup, genre classification. */
 import { convert } from 'html-to-text';
+import { parse } from 'node-html-parser';
 
 const UA =
 	'onstage-tw-aggregator/0.1 (+https://github.com/TakalaWang/onstage-tw; theatre listing aggregator, links back, does not resell)';
@@ -86,6 +87,35 @@ const GENRE_PATTERNS: [string, RegExp][] = [
 	['相聲', /相聲|脫口秀|漫才|單口/],
 	['舞台劇', /舞台劇|舞臺劇|話劇/]
 ];
+
+/**
+ * Parse a utiki-platform detail page (shared by ERA and udn) for the fields
+ * that aren't on the listing page: on-sale time, venue, and lowest price.
+ */
+export function parseUtikiDetail(html: string): {
+	onSaleAt: string | null;
+	venue: string | null;
+	minPrice: number | null;
+} {
+	const root = parse(html);
+	const orderStart = root.querySelector('[id*="S_ORDER_DATE"]')?.text ?? '';
+	const onSaleStart = extractDateRange(orderStart).start;
+	const venue =
+		root
+			.querySelectorAll('[id*="PLACE_NAME"]')
+			.map((e) => e.text.trim())
+			.find((t) => t.length > 0) ?? null;
+	const priceText = root
+		.querySelectorAll('[id*="_PRICE"]')
+		.map((e) => e.text)
+		.join(' ');
+	const prices = (priceText.match(/\d[\d,]{1,6}/g) ?? []).map((n) => Number(n.replace(/,/g, '')));
+	return {
+		onSaleAt: onSaleStart ? `${onSaleStart}T00:00:00+08:00` : null,
+		venue,
+		minPrice: prices.length ? Math.min(...prices) : null
+	};
+}
 
 /**
  * Classify a show into a finer theatre sub-genre from its title.

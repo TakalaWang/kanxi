@@ -5,14 +5,14 @@
     <link>https://onstage-tw.vercel.app</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM and ERA.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 29 May 2026 07:59:35 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 08:42:02 GMT</lastBuildDate>
     <item>
       <title>超人力霸王舞台劇In Taiwan 2026</title>
       <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P19Q1GAI</link>
       <guid isPermaLink="false">era:P19Q1GAI</guid>
       <pubDate>Thu, 23 Jul 2026 16:00:00 GMT</pubDate>
       <category>舞台劇</category>
-      <description>Date: 2026-07-24 – 2026-08-16 · Source: 年代售票</description>
+      <description>Date: 2026-07-24 – 2026-08-16 · Venue: 臺北市政大樓親子劇場 · Source: 年代售票</description>
     </item>
     <item>
       <title>2026《再一次！唱歌旅行去》十週年親子演唱會</title>
@@ -20,7 +20,7 @@
       <guid isPermaLink="false">era:P19I4966</guid>
       <pubDate>Fri, 10 Jul 2026 16:00:00 GMT</pubDate>
       <category>兒童親子</category>
-      <description>Date: 2026-07-11 – 2026-11-22 · Source: 年代售票</description>
+      <description>Date: 2026-07-11 – 2026-11-22 · Venue: 臺灣戲曲中心大表演廳 · Source: 年代售票</description>
     </item>
     <item>
       <title>2026年夏季巧虎大型舞臺劇「銀河怪盜的祕密」</title>
@@ -28,7 +28,7 @@
       <guid isPermaLink="false">era:P192ILGJ</guid>
       <pubDate>Fri, 12 Jun 2026 16:00:00 GMT</pubDate>
       <category>舞台劇</category>
-      <description>Date: 2026-06-13 – 2026-08-29 · Source: 年代售票</description>
+      <description>Date: 2026-06-13 – 2026-08-29 · Venue: 桃園展演中心展演廳 · Source: 年代售票</description>
     </item>
     <item>
       <title>嘉北國小管樂班×嘉頌重奏團《彩虹鴉》</title>
@@ -36,7 +36,7 @@
       <guid isPermaLink="false">era:P1889W7X</guid>
       <pubDate>Wed, 03 Jun 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-06-04 · Source: 年代售票</description>
+      <description>Date: 2026-06-04 · Venue: 嘉義縣表演藝術中心演藝廳 · Source: 年代售票</description>
     </item>
     <item>
       <title>愛劇在一起–開心的小龍女</title>
@@ -44,7 +44,7 @@
       <guid isPermaLink="false">era:P19XNXJO</guid>
       <pubDate>Fri, 29 May 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-05-30 · Source: 年代售票</description>
+      <description>Date: 2026-05-30 · Venue: 高雄科工館南館演講廳 · Source: 年代售票</description>
     </item>
     <item>
       <title>《孫臏 -終-》</title>

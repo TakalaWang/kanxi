@@ -21,7 +21,7 @@
 	}}
 >
 	<div
-		class="animate-pop-in my-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5"
+		class="animate-pop-in my-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 dark:bg-[#1e1716] dark:ring-white/10"
 		role="dialog"
 		aria-modal="true"
 		aria-label={show.title}
@@ -53,16 +53,18 @@
 				{#if show.category}<span class="text-xs text-gray-500">{show.category}</span>{/if}
 			</div>
 
-			<h2 class="font-display text-2xl font-semibold leading-snug text-gray-900">{show.title}</h2>
+			<h2 class="font-display text-2xl font-semibold leading-snug text-gray-900 dark:text-gray-100">
+				{show.title}
+			</h2>
 
 			<dl class="grid grid-cols-[1.25rem_auto_1fr] items-center gap-x-2 gap-y-3 text-sm">
 				<Icon name="calendar" size={16} class="text-curtain-500" />
 				<dt class="text-gray-400">演出日期</dt>
-				<dd class="text-gray-800">{fmtDateRange(show)}</dd>
+				<dd class="text-gray-800 dark:text-gray-200">{fmtDateRange(show)}</dd>
 				{#if show.venue || show.city}
 					<Icon name="map-pin" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">場館</dt>
-					<dd class="text-gray-800">{show.venue ?? ''}{show.city ? ` · ${show.city}` : ''}</dd>
+					<dd class="text-gray-800 dark:text-gray-200">{show.venue ?? ''}{show.city ? ` · ${show.city}` : ''}</dd>
 				{/if}
 				{#if fmtOnSale(show.onSaleAt, true)}
 					<Icon name="ticket" size={16} class="text-curtain-500" />
@@ -72,19 +74,19 @@
 				{#if fmtPrice(show)}
 					<Icon name="tag" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">票價</dt>
-					<dd class="text-gray-800">{fmtPrice(show)}</dd>
+					<dd class="text-gray-800 dark:text-gray-200">{fmtPrice(show)}</dd>
 				{/if}
 				{#if show.organizer}
 					<Icon name="building" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">主辦</dt>
-					<dd class="text-gray-800">{show.organizer}</dd>
+					<dd class="text-gray-800 dark:text-gray-200">{show.organizer}</dd>
 				{/if}
 			</dl>
 
 			{#if show.sessions.length > 1}
-				<div class="rounded-2xl bg-curtain-50 p-4">
-					<p class="mb-2 text-sm font-medium text-gray-700">各場次</p>
-					<ul class="space-y-1.5 text-sm text-gray-600">
+				<div class="rounded-2xl bg-curtain-50 p-4 dark:bg-white/5">
+					<p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">各場次</p>
+					<ul class="space-y-1.5 text-sm text-gray-600 dark:text-gray-300">
 						{#each show.sessions as session, i (i)}
 							<li class="flex flex-wrap items-center gap-x-2">
 								<span class="tabular-nums">{session.date ? session.date.replaceAll('-', '/') : '—'}</span>
@@ -99,7 +101,7 @@
 			{/if}
 
 			{#if show.description}
-				<div class="prose prose-sm max-w-none whitespace-pre-line text-gray-700">
+				<div class="prose prose-sm max-w-none whitespace-pre-line text-gray-700 dark:prose-invert dark:text-gray-300">
 					{show.description}
 				</div>
 			{/if}

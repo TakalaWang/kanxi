@@ -16,12 +16,13 @@
 	let category = $state('');
 	let fromDate = $state('');
 	let toDate = $state('');
-	let onSale = $state<'all' | 'available' | 'upcoming' | 'none'>('all');
+	let onSale = $state<'all' | 'available' | 'upcoming'>('all');
 	let sort = $state<'date' | 'onsale'>('date');
 	let selected = $state<Show | null>(null);
 	let showSubscribe = $state(false);
-	let visible = $state(48); // grows as the user scrolls (infinite scroll)
+	let visible = $state(48);
 	let sentinel = $state<HTMLElement | null>(null);
+	let dark = $state(false);
 
 	const cities = $derived(
 		[...new Set(data.shows.map((s) => s.city).filter((c): c is string => !!c))].sort()
@@ -44,13 +45,11 @@
 			if (activeSources.size && !activeSources.has(s.source)) return false;
 			if (city && s.city !== city) return false;
 			if (category && s.category !== category) return false;
-			// date-range overlap with the show's run
 			if (fromDate && (s.endDate ?? s.startDate ?? '9999-12-31') < fromDate) return false;
 			if (toDate && (s.startDate ?? s.endDate ?? '0000-01-01') > toDate) return false;
-			// on-sale status
-			if (onSale === 'available' && !(s.onSaleAt && s.onSaleAt <= nowIso)) return false;
+			// On-sale status. No on-sale info is treated as already on sale.
+			if (onSale === 'available' && s.onSaleAt && s.onSaleAt > nowIso) return false;
 			if (onSale === 'upcoming' && !(s.onSaleAt && s.onSaleAt > nowIso)) return false;
-			if (onSale === 'none' && s.onSaleAt) return false;
 			if (q) {
 				const hay =
 					`${s.title} ${s.venue ?? ''} ${s.category ?? ''} ${s.organizer ?? ''}`.toLowerCase();
@@ -80,13 +79,11 @@
 		onSale = 'all';
 	}
 
-	// Reset the visible window whenever the result set changes.
 	$effect(() => {
 		filtered.length;
 		visible = 48;
 	});
 
-	// Infinite scroll: grow `visible` as the sentinel nears the viewport.
 	$effect(() => {
 		if (!sentinel) return;
 		const io = new IntersectionObserver(
@@ -99,23 +96,23 @@
 		return () => io.disconnect();
 	});
 
-	const updatedLabel = $derived(
-		data.updatedAt
-			? new Date(data.updatedAt).toLocaleString('zh-TW', {
-					timeZone: 'Asia/Taipei',
-					month: 'numeric',
-					day: 'numeric',
-					hour: '2-digit',
-					minute: '2-digit',
-					hour12: false
-				})
-			: null
-	);
+	$effect(() => {
+		dark = document.documentElement.classList.contains('dark');
+	});
+
+	function toggleTheme() {
+		dark = !dark;
+		document.documentElement.classList.toggle('dark', dark);
+		try {
+			localStorage.setItem('theme', dark ? 'dark' : 'light');
+		} catch {
+			/* ignore */
+		}
+	}
 
 	const selectClass =
-		'rounded-full border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-700 outline-none transition hover:border-curtain-400 focus:border-curtain-500 cursor-pointer';
-	const dateClass =
-		'rounded-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition hover:border-curtain-400 focus:border-curtain-500';
+		'rounded-full border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-700 outline-none transition hover:border-curtain-400 focus:border-curtain-500 cursor-pointer dark:border-white/15 dark:bg-white/5 dark:text-gray-200';
+	const dateBorderless = 'border-0 bg-transparent py-1 text-sm text-gray-600 outline-none dark:text-gray-300';
 </script>
 
 <svelte:head>
@@ -127,42 +124,41 @@
 	<link rel="alternate" type="application/rss+xml" title="OnStage TW" href="/feed.xml" />
 </svelte:head>
 
-<header class="relative overflow-hidden bg-curtain-950 text-white">
-	<div
-		class="animate-spotlight pointer-events-none absolute -top-1/3 left-1/4 h-[120%] w-[60%] rounded-full opacity-70 blur-3xl"
-		style="background: radial-gradient(circle, rgba(246,183,60,0.35), rgba(200,50,58,0.25) 45%, transparent 70%)"
-	></div>
-	<div
-		class="pointer-events-none absolute inset-0 opacity-[0.07]"
-		style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 22px 22px"
-	></div>
+<!-- Masthead: centered name at the top; controls in the top-right corner -->
+<header class="relative">
+	<div class="absolute right-4 top-4 flex items-center gap-2">
+		<button
+			onclick={toggleTheme}
+			aria-label="切換深色 / 淺色模式"
+			class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-curtain-400 hover:text-curtain-600 dark:border-white/15 dark:bg-white/5 dark:text-gray-300"
+		>
+			<Icon name={dark ? 'sun' : 'moon'} size={16} />
+		</button>
+		<button
+			onclick={() => (showSubscribe = !showSubscribe)}
+			class="flex items-center gap-1.5 rounded-full bg-curtain-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-curtain-700 active:scale-[0.98]"
+		>
+			<Icon name="rss" size={15} />
+			<span class="hidden sm:inline">RSS 訂閱</span>
+		</button>
+	</div>
 
-	<div class="relative mx-auto max-w-6xl px-5 py-16 sm:py-20">
-		<p class="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-gold-400">Taiwan Theatre</p>
-		<div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-			<img src={favicon} alt="" class="h-11 w-11 rounded-xl shadow-lg sm:h-12 sm:w-12" />
-			<h1 class="text-6xl font-bold leading-none tracking-tight sm:text-7xl">幕間</h1>
-			<span class="font-display text-2xl italic text-curtain-100/70 sm:text-3xl">OnStage TW</span>
+	<div class="mx-auto max-w-6xl px-5 pb-7 pt-16 text-center">
+		<div class="flex items-center justify-center gap-3">
+			<img src={favicon} alt="" class="h-10 w-10 rounded-xl shadow-sm" />
+			<h1 class="text-5xl font-bold tracking-tight sm:text-6xl">幕間</h1>
+			<span class="font-display text-2xl italic text-gray-400 dark:text-gray-500">OnStage TW</span>
 		</div>
-		<p class="mt-5 max-w-xl text-lg text-curtain-100/85">台灣戲劇演出，一站看完。</p>
-
-		<div class="mt-7 flex flex-wrap items-center gap-2.5 text-sm">
-			<span class="rounded-full bg-white/10 px-3.5 py-1.5 font-medium backdrop-blur">
-				{data.shows.length} 檔戲劇
-			</span>
-			{#if updatedLabel}
-				<span class="rounded-full bg-white/10 px-3.5 py-1.5 text-curtain-100/70 backdrop-blur">
-					更新於 {updatedLabel}
-				</span>
-			{/if}
-		</div>
+		<p class="mt-3 text-base text-gray-500 dark:text-gray-400">台灣戲劇演出，一站看完。</p>
 	</div>
 </header>
 
 <!-- Sticky filter bar -->
-<div class="sticky top-0 z-20 border-b border-curtain-100 bg-curtain-50/80 backdrop-blur-xl">
+<div
+	class="sticky top-0 z-20 border-y border-curtain-100 bg-curtain-50/80 backdrop-blur-xl dark:border-white/10 dark:bg-[#16100f]/80"
+>
 	<div class="mx-auto max-w-6xl space-y-3 px-5 py-4">
-		<div class="flex flex-wrap items-center gap-3">
+		<div class="flex flex-wrap items-center gap-2">
 			<div class="relative min-w-50 flex-1">
 				<span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
 					<Icon name="search" size={16} />
@@ -171,16 +167,9 @@
 					type="search"
 					bind:value={query}
 					placeholder="搜尋劇名、場館、主辦、分類…"
-					class="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-curtain-500 focus:ring-2 focus:ring-curtain-500/20"
+					class="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-curtain-500 focus:ring-2 focus:ring-curtain-500/20 dark:border-white/15 dark:bg-white/5 dark:text-gray-100"
 				/>
 			</div>
-			<button
-				onclick={() => (showSubscribe = !showSubscribe)}
-				class="flex items-center gap-1.5 rounded-full bg-curtain-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-curtain-700 active:scale-[0.98]"
-			>
-				<Icon name="rss" size={15} />
-				RSS 訂閱
-			</button>
 		</div>
 
 		<div class="flex flex-wrap items-center gap-2">
@@ -193,18 +182,19 @@
 				{#each categories as c (c)}<option value={c}>{c}</option>{/each}
 			</select>
 
-			<label class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-1 text-sm text-gray-500">
+			<span
+				class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 dark:border-white/15 dark:bg-white/5"
+			>
 				<Icon name="calendar" size={14} class="text-gray-400" />
-				<input type="date" bind:value={fromDate} class={dateClass + ' border-0 py-1 pl-1 pr-1'} aria-label="起始日期" />
-				<span class="text-gray-300">–</span>
-				<input type="date" bind:value={toDate} class={dateClass + ' border-0 py-1 pl-1 pr-2'} aria-label="結束日期" />
-			</label>
+				<input type="date" bind:value={fromDate} class={dateBorderless} aria-label="起始日期" />
+				<span class="text-gray-300 dark:text-gray-600">–</span>
+				<input type="date" bind:value={toDate} class={dateBorderless} aria-label="結束日期" />
+			</span>
 
 			<select bind:value={onSale} class={selectClass} aria-label="開賣狀態">
 				<option value="all">開賣狀態：全部</option>
 				<option value="available">已開賣</option>
 				<option value="upcoming">尚未開賣</option>
-				<option value="none">無開賣資訊</option>
 			</select>
 			<select bind:value={sort} class={selectClass} aria-label="排序">
 				<option value="date">排序：演出日期</option>
@@ -218,7 +208,7 @@
 					onclick={() => toggleSource(s)}
 					class="rounded-full border px-3 py-1 transition {activeSources.has(s)
 						? 'border-curtain-600 bg-curtain-600 text-white'
-						: 'border-gray-300 bg-white text-gray-600 hover:border-curtain-400'}"
+						: 'border-gray-300 bg-white text-gray-600 hover:border-curtain-400 dark:border-white/15 dark:bg-white/5 dark:text-gray-300'}"
 				>
 					{SOURCE_LABELS[s]}
 				</button>
@@ -235,18 +225,16 @@
 	</div>
 </div>
 
-<!-- RSS subscribe panel: notifications handled by the user's own RSS reader, no backend -->
+<!-- RSS subscribe panel -->
 {#if showSubscribe}
-	<div class="border-b border-curtain-100 bg-white">
-		<div class="mx-auto max-w-6xl space-y-3 px-5 py-5 text-sm text-gray-600">
-			<p class="flex items-center gap-2 font-medium text-gray-800">
+	<div class="border-b border-curtain-100 bg-white dark:border-white/10 dark:bg-[#1e1716]">
+		<div class="mx-auto max-w-6xl space-y-3 px-5 py-5 text-sm text-gray-600 dark:text-gray-300">
+			<p class="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-100">
 				<Icon name="rss" size={16} class="text-curtain-600" /> 用 RSS 訂閱開賣資訊
 			</p>
-			<p>
-				把下面的 RSS 連結加進你的閱讀器（Feedly、Inoreader、NetNewsWire…），有新戲上架就會出現在你的訂閱裡。
-			</p>
+			<p>把下面的 RSS 連結加進你的閱讀器（Feedly、Inoreader、NetNewsWire…），有新戲上架就會出現在你的訂閱裡。</p>
 			<div class="flex flex-wrap items-center gap-2">
-				<code class="rounded-lg bg-curtain-50 px-3 py-2 text-xs text-curtain-800">{data.siteUrl}/feed.xml</code>
+				<code class="rounded-lg bg-curtain-50 px-3 py-2 text-xs text-curtain-800 dark:bg-white/10 dark:text-gray-200">{data.siteUrl}/feed.xml</code>
 				<a
 					href="/feed.xml"
 					class="flex items-center gap-1.5 rounded-full bg-curtain-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-curtain-700"
@@ -263,7 +251,7 @@
 
 <!-- Show grid -->
 <main class="mx-auto max-w-6xl px-5 py-6">
-	<p class="mb-4 text-sm text-gray-500">符合條件：{filtered.length} 檔</p>
+	<p class="mb-4 text-sm text-gray-500 dark:text-gray-400">符合條件：{filtered.length} 檔</p>
 	{#if filtered.length === 0}
 		<p class="py-20 text-center text-gray-400">沒有符合條件的演出，試試調整篩選。</p>
 	{:else}
@@ -282,21 +270,24 @@
 	<ShowModal show={selected} onclose={() => (selected = null)} />
 {/if}
 
-<footer class="mt-8 border-t border-curtain-100 bg-curtain-950 py-10 text-center text-xs text-curtain-100/50">
+<footer
+	class="mt-8 border-t border-curtain-100 bg-curtain-950 py-10 text-center text-xs text-curtain-100/50 dark:border-white/10"
+>
 	<p class="font-display text-base italic text-curtain-100/80">幕間 · OnStage TW</p>
 	<p class="mx-auto mt-2 max-w-xl px-5">
 		開源戲劇演出聚合 · 資料來自各售票平台公開頁面，著作權屬各主辦單位與售票平台 · 本站不販售門票，購票連結皆導回官方售票網
 	</p>
-	<p class="mt-3 flex items-center justify-center gap-3">
+	<div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+		<a
+			href="https://github.com/TakalaWang/onstage-tw"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 font-medium text-curtain-100/90 transition hover:border-gold-400 hover:text-gold-400"
+		>
+			<Icon name="star" size={13} /> 喜歡的話，在 GitHub 給顆 Star
+		</a>
 		<a href="/feed.xml" class="inline-flex items-center gap-1 hover:text-gold-400">
 			<Icon name="rss" size={13} /> RSS
 		</a>
-		<span class="text-curtain-100/20">·</span>
-		<a
-			href="https://github.com/TakalaWang/onstage-tw"
-			class="hover:text-gold-400"
-			target="_blank"
-			rel="noopener noreferrer">GitHub</a
-		>
-	</p>
+	</div>
 </footer>

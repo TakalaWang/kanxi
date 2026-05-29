@@ -19,7 +19,7 @@
 	type="button"
 	onclick={() => onopen(show)}
 	style="animation-delay: {delay}ms"
-	class="animate-fade-up group flex flex-col overflow-hidden rounded-2xl border border-curtain-100 bg-white text-left shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-curtain-900/10 active:translate-y-0 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-curtain-500 focus-visible:outline-none"
+	class="animate-fade-up group flex flex-col overflow-hidden rounded-2xl border border-curtain-100 bg-white text-left shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-curtain-900/10 active:translate-y-0 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-curtain-500 focus-visible:outline-none dark:border-white/10 dark:bg-[#1e1716]"
 >
 	<div class="relative aspect-[3/2] overflow-hidden bg-curtain-950">
 		{#if show.imageUrl}
@@ -62,12 +62,12 @@
 		</div>
 
 		<h3
-			class="line-clamp-2 text-[15px] font-semibold leading-snug text-gray-900 transition-colors group-hover:text-curtain-700"
+			class="line-clamp-2 text-[15px] font-semibold leading-snug text-gray-900 transition-colors group-hover:text-curtain-700 dark:text-gray-100 dark:group-hover:text-curtain-400"
 		>
 			{show.title}
 		</h3>
 
-		<div class="mt-auto space-y-1.5 pt-1 text-sm text-gray-500">
+		<div class="mt-auto space-y-1.5 pt-1 text-sm text-gray-500 dark:text-gray-400">
 			<p class="flex items-center gap-1.5">
 				<Icon name="calendar" size={14} class="shrink-0 text-gray-400" />
 				{fmtDateRange(show)}
