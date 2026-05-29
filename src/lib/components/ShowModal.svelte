@@ -176,6 +176,24 @@
 				</div>
 			{/if}
 
+			{#if show.introImages.length}
+				<div class="space-y-3">
+					{#if !desc}
+						<p class="text-sm font-medium text-gray-700 dark:text-gray-200">節目介紹</p>
+					{/if}
+					{#each show.introImages as img, i (i)}
+						<img
+							src={img}
+							alt={`${show.title} 節目介紹圖 ${i + 1}`}
+							loading="lazy"
+							decoding="async"
+							referrerpolicy="no-referrer"
+							class="w-full rounded-xl ring-1 ring-black/5 dark:ring-white/10"
+						/>
+					{/each}
+				</div>
+			{/if}
+
 			<p class="text-xs text-gray-400">本站不販售門票，「前往購票」將開啟官方售票頁。</p>
 		</div>
 	</div>

@@ -120,6 +120,7 @@ export async function scrapeKktix(): Promise<Show[]> {
 					url: entry.url,
 					description: detail ? null : (entry.summary ?? null),
 					notes: null,
+					introImages: [],
 					organizer: null,
 					sessions: [] as Session[]
 				});

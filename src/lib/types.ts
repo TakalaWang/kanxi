@@ -51,6 +51,8 @@ export interface Show {
 	description: string | null;
 	/** Curated highlights pulled from the detail page's notes (e.g. duration, age guidance). */
 	notes: string | null;
+	/** Program-intro graphics (hot-linked from the source); used when the intro is image-based. */
+	introImages: string[];
 	/** Organizer. */
 	organizer: string | null;
 	/** Per-session / per-venue details (currently OPENTIX only). */

@@ -7,6 +7,7 @@ import {
 	cityFromText,
 	htmlToText,
 	extractHighlights,
+	contentImages,
 	firstDate,
 	extractPriceRange,
 	dateRangeFromDates
@@ -87,6 +88,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 		let city: string | null = null;
 		let description: string | null = null;
 		let notes: string | null = null;
+		let introImages: string[] = [];
 		let sessions: Session[] = [];
 
 		if (!fast) {
@@ -106,7 +108,9 @@ export async function scrapeUdn(): Promise<Show[]> {
 				const range = extractPriceRange(priceText);
 				if (range.minPrice != null) minPrice = range.minPrice;
 				if (range.maxPrice != null) maxPrice = range.maxPrice;
-				description = htmlToText(root.querySelector('.showIntro')?.innerHTML);
+				const intro = root.querySelector('.showIntro');
+				description = htmlToText(intro?.innerHTML);
+				introImages = contentImages(intro);
 				// Running time / age live in the collapsed "注意事項" + intro sections.
 				notes = extractHighlights(
 					`${root.querySelector('.admissionNote')?.text ?? ''} ${root.querySelector('.yd_program-main')?.text ?? ''}`
@@ -144,6 +148,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 			url: DETAIL_URL(item.id),
 			description,
 			notes,
+			introImages,
 			organizer: null,
 			sessions
 		});

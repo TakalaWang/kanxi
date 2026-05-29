@@ -8,6 +8,7 @@ import {
 	cityFromText,
 	htmlToText,
 	extractHighlights,
+	contentImages,
 	firstDate,
 	extractPriceRange,
 	dateRangeFromDates
@@ -72,6 +73,7 @@ export async function scrapeEra(): Promise<Show[]> {
 		let maxPrice: number | null = null;
 		let description: string | null = null;
 		let notes: string | null = null;
+		let introImages: string[] = [];
 		let organizer: string | null = null;
 		let rawSessions: EraSession[] = [];
 
@@ -85,9 +87,9 @@ export async function scrapeEra(): Promise<Show[]> {
 					.filter((p): p is string => !!p)
 					.join(' ');
 				({ minPrice, maxPrice } = extractPriceRange(prices));
-				description = htmlToText(
-					root.querySelector('#ctl00_ContentPlaceHolder1_lbProgramInfo_Content')?.innerHTML
-				);
+				const intro = root.querySelector('#ctl00_ContentPlaceHolder1_lbProgramInfo_Content');
+				description = htmlToText(intro?.innerHTML);
+				introImages = contentImages(intro);
 				organizer =
 					root.querySelector('#ctl00_ContentPlaceHolder1_lbOrgName')?.text.trim() || null;
 				// Running time / age live in the "注意事項" tab pane.
@@ -129,6 +131,7 @@ export async function scrapeEra(): Promise<Show[]> {
 			url: DETAIL_URL(item.id),
 			description,
 			notes,
+			introImages,
 			organizer,
 			sessions: cleanSessions
 		});

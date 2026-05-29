@@ -5,7 +5,7 @@
     <link>https://onstage.takalawang.dev</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and KKTIX.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 29 May 2026 13:13:30 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 13:27:15 GMT</lastBuildDate>
     <item>
       <title>劇場在地・共創新連結-白色恐怖田調分享會(含呈現演出)</title>
       <link>https://www.accupass.com/event/2603310621312093918182</link>
@@ -333,6 +333,14 @@
       <pubDate>Sat, 06 Jun 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-06-07 · Venue: 大稻埕戲苑, 臺北市 · Source: Accupass 活動通</description>
+    </item>
+    <item>
+      <title>憤怒旅行卡啦帶</title>
+      <link>https://www.opentix.life/event/2039524426554306560</link>
+      <guid isPermaLink="false">opentix:2039524426554306560</guid>
+      <pubDate>Fri, 05 Jun 2026 16:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-06-06 – 2026-07-26 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
       <title>尋找心中的One Piece-2026惠文兒樂成果發表會</title>
@@ -797,14 +805,6 @@
       <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-07-10 – 2026-07-12 · Venue: 牯嶺街小劇場一樓實驗劇場, 臺北市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
-    </item>
-    <item>
-      <title>春美歌劇團《伽羅香》</title>
-      <link>https://www.opentix.life/event/2047598589857177601</link>
-      <guid isPermaLink="false">opentix:2047598589857177601</guid>
-      <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-09-12 – 2026-09-13 · Venue: 衛武營國家藝術文化中心歌劇院, 高雄市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
     </item>
   </channel>
 </rss>

@@ -99,6 +99,42 @@ export function extractHighlights(text: string | null | undefined): string | nul
 	return parts.length ? parts.join(' · ') : null;
 }
 
+// UI chrome / generic promo banners that show up inside intro containers but
+// aren't part of the program graphic.
+const NON_CONTENT_IMG =
+	/step_select|sns_|_RWD\/images\/|\/images\/(icon|btn|button|arrow|spacer|blank|line)|文化幣|culture|facebook|line\.png|\.svg(\?|$)/i;
+
+/**
+ * Collect program-intro graphics from a detail container (kham/udn/era put the
+ * artwork — sometimes the entire intro — in <img> tags). Keeps only hot-linkable
+ * http(s) content images, dropping data: URIs, UI chrome and generic promos.
+ */
+export function contentImages(
+	el:
+		| { querySelectorAll: (s: string) => { getAttribute: (a: string) => string | null | undefined }[] }
+		| null
+		| undefined
+): string[] {
+	if (!el) return [];
+	const urls: string[] = [];
+	for (const im of el.querySelectorAll('img')) {
+		const raw = im.getAttribute('src') || im.getAttribute('data-original') || '';
+		if (!/^https?:\/\//i.test(raw)) continue; // skip data: URIs and relative paths
+		let decoded = raw;
+		try {
+			decoded = decodeURIComponent(raw);
+		} catch {
+			/* keep raw */
+		}
+		if (NON_CONTENT_IMG.test(decoded)) continue;
+		// Upgrade to https so the image isn't blocked as mixed content on our https site.
+		const url = raw.replace(/^http:\/\//i, 'https://');
+		if (!urls.includes(url)) urls.push(url);
+		if (urls.length >= 8) break;
+	}
+	return urls;
+}
+
 /** Extract the on-sale time from text. Returns ISO at day granularity. */
 export function extractOnSale(text: string): string | null {
 	const idx = text.search(/開賣|售票時間|啟售|開始售票/);

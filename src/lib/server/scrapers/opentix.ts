@@ -97,6 +97,7 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 			url: EVENT_URL(p.id),
 			description,
 			notes: null,
+			introImages: [],
 			organizer,
 			sessions
 		});
