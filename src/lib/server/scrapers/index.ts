@@ -4,6 +4,7 @@ import { scrapeUdn } from './udn';
 import { scrapeKham } from './kham';
 import { scrapeEra } from './era';
 import { scrapeKktix } from './kktix';
+import { scrapeAccupass } from './accupass';
 
 type Scraper = { source: Source; run: () => Promise<Show[]> };
 
@@ -12,7 +13,8 @@ const SCRAPERS: Scraper[] = [
 	{ source: 'udn', run: scrapeUdn },
 	{ source: 'kham', run: scrapeKham },
 	{ source: 'era', run: scrapeEra },
-	{ source: 'kktix', run: scrapeKktix }
+	{ source: 'kktix', run: scrapeKktix },
+	{ source: 'accupass', run: scrapeAccupass },
 ];
 
 export interface ScrapeResult {

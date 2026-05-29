@@ -2,6 +2,7 @@
 	import { SOURCE_LABELS, type Show } from '$lib/types';
 	import { fmtDateRange, fmtPrice, fmtOnSale, SOURCE_COLOR } from '$lib/format';
 	import { downloadShowIcs } from '$lib/ics';
+	import { loadDescription } from '$lib/descriptions';
 	import { fade, scale } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { prefersReducedMotion } from 'svelte/motion';
@@ -9,6 +10,18 @@
 
 	let { show, onclose }: { show: Show; onclose: () => void } = $props();
 	let shared = $state(false);
+
+	// Descriptions are split out of the list payload; fetch lazily on open.
+	let desc = $state<string | null>(null);
+	$effect(() => {
+		desc = show.description ?? null;
+		if (!show.description) {
+			const id = show.id;
+			loadDescription(id).then((d) => {
+				if (d && show.id === id) desc = d;
+			});
+		}
+	});
 
 	// Respect reduced-motion: collapse durations to 0 so element still mounts/unmounts cleanly.
 	const reduce = $derived(prefersReducedMotion.current);
@@ -152,9 +165,9 @@
 				</div>
 			{/if}
 
-			{#if show.description}
+			{#if desc}
 				<div class="prose prose-sm max-w-none whitespace-pre-line text-gray-700 dark:prose-invert dark:text-gray-300">
-					{show.description}
+					{desc}
 				</div>
 			{/if}
 

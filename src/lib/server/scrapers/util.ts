@@ -1,6 +1,7 @@
 /** Shared scraper helpers: polite fetch, date parsing, HTML cleanup, genre classification. */
 import { convert } from 'html-to-text';
 import { parse } from 'node-html-parser';
+import { findVenue } from '../../venues';
 
 const UA =
 	'onstage-tw-aggregator/0.1 (+https://github.com/TakalaWang/onstage-tw; theatre listing aggregator, links back, does not resell)';
@@ -183,6 +184,8 @@ const VENUE_CITY: [RegExp, string][] = [
 export function cityFromText(text: string | null | undefined): string | null {
 	if (!text) return null;
 	for (const c of TW_CITIES) if (text.includes(c)) return c.replace('台', '臺');
+	const venue = findVenue(text); // richer venue registry (also powers the map)
+	if (venue) return venue.city;
 	for (const [re, city] of VENUE_CITY) if (re.test(text)) return city;
 	return null;
 }

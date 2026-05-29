@@ -69,18 +69,28 @@ ${items}
 }
 
 /**
- * Write the two static artifacts the site serves:
- *   - shows.json : full snapshot the page reads
- *   - feed.xml   : RSS feed users subscribe to in their own reader
+ * Write the static artifacts the site serves:
+ *   - shows.json        : list snapshot the page reads (descriptions stripped for size)
+ *   - descriptions.json : id → description, lazy-loaded only when a modal opens
+ *   - feed*.xml         : RSS feeds users subscribe to in their reader
  */
 export function writeOutputs(shows: Show[]): { count: number } {
 	const active = activeShows(shows);
 	const builtAt = new Date().toISOString();
 	mkdirSync(OUT_DIR, { recursive: true });
+
+	// Split out descriptions — they're the bulk of the payload and only the modal
+	// needs them, so the prerendered list stays light.
+	const descriptions: Record<string, string> = {};
+	const light = active.map((s) => {
+		if (s.description) descriptions[s.id] = s.description;
+		return { ...s, description: null };
+	});
 	writeFileSync(
 		`${OUT_DIR}/shows.json`,
-		JSON.stringify({ updatedAt: builtAt, count: active.length, shows: active })
+		JSON.stringify({ updatedAt: builtAt, count: light.length, shows: light })
 	);
+	writeFileSync(`${OUT_DIR}/descriptions.json`, JSON.stringify(descriptions));
 	writeFileSync(`${OUT_DIR}/feed.xml`, renderFeed(active, builtAt));
 
 	// Per-source feeds (e.g. /feed-opentix.xml) so readers can follow one platform.

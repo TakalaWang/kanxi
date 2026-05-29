@@ -8,6 +8,7 @@
 	import { favorites } from '$lib/favorites.svelte';
 	import { GENRE_SLUG } from '$lib/genres';
 	import { REGION_ORDER, citiesInRegion } from '$lib/regions';
+	import { findVenue } from '$lib/venues';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -36,11 +37,24 @@
 	let dark = $state(false);
 	let curtain = $state(true); // one-time stage-curtain reveal on load
 
+	// Resolve a city at read time: prefer an explicit city, else look the venue up in
+	// the venue registry. This lets an expanded venue list improve filtering without
+	// needing to re-scrape every source.
+	function cityOf(city: string | null | undefined, venue: string | null | undefined): string | null {
+		if (city) return city;
+		if (venue) return findVenue(venue)?.city ?? null;
+		return null;
+	}
+
 	// All cities a show plays in (it may run at venues in several cities).
 	function showCities(s: Show): string[] {
 		const set = new Set<string>();
-		if (s.city) set.add(s.city);
-		for (const ss of s.sessions) if (ss.city) set.add(ss.city);
+		const top = cityOf(s.city, s.venue);
+		if (top) set.add(top);
+		for (const ss of s.sessions) {
+			const c = cityOf(ss.city, ss.venue);
+			if (c) set.add(c);
+		}
 		return [...set];
 	}
 
@@ -49,14 +63,20 @@
 	// match "a performance on date X in region Y" rather than the whole tour window.
 	function occurrences(s: Show): { start: string | null; end: string | null; city: string | null }[] {
 		if (s.sessions.length)
-			return s.sessions.map((o) => ({ start: o.date, end: o.date, city: o.city ?? s.city }));
-		return [{ start: s.startDate, end: s.endDate, city: s.city }];
+			return s.sessions.map((o) => ({
+				start: o.date,
+				end: o.date,
+				city: cityOf(o.city, o.venue) ?? cityOf(s.city, s.venue)
+			}));
+		return [{ start: s.startDate, end: s.endDate, city: cityOf(s.city, s.venue) }];
 	}
 
 	const cities = $derived([...new Set(data.shows.flatMap(showCities))].sort());
 	const categories = $derived(
 		[...new Set(data.shows.map((s) => s.category).filter((c): c is string => !!c))].sort()
 	);
+	// Only show sources that actually have data (hides a source chip when it has no shows).
+	const presentSources = $derived(allSources.filter((s) => data.shows.some((x) => x.source === s)));
 
 	function toggleSource(s: Source) {
 		const next = new Set(activeSources);
@@ -163,6 +183,8 @@
 
 	$effect(() => {
 		dark = document.documentElement.classList.contains('dark');
+		// Filters collapse on every screen; default them open on desktop, closed on mobile.
+		showFilters = matchMedia('(min-width: 640px)').matches;
 		// Skip the curtain reveal when reduced motion is requested.
 		if (matchMedia('(prefers-reduced-motion: reduce)').matches) curtain = false;
 		else {
@@ -250,26 +272,25 @@
 			<div class="curtain-half curtain-left h-full w-1/2"></div>
 			<div class="curtain-half curtain-right h-full w-1/2"></div>
 		</div>
-		<!-- hoisted brand: a hanging wooden sign on two ropes, lifted off-screen -->
-		<div class="curtain-hoist absolute inset-x-0 top-0 flex flex-col items-center text-white">
-			<div class="flex w-64 justify-between px-7 sm:w-72">
-				<div class="curtain-rope h-[26vh]"></div>
-				<div class="curtain-rope h-[26vh]"></div>
-			</div>
-			<div class="curtain-sign relative flex w-64 flex-col items-center rounded-2xl px-6 py-7 sm:w-72">
-				<span class="curtain-eyelet absolute -top-1.5 left-6"></span>
-				<span class="curtain-eyelet absolute -top-1.5 right-6"></span>
+		<!-- hoisted brand: a hanging wooden plank on one thick rope, lifted off-screen -->
+		<div class="curtain-hoist absolute inset-x-0 top-0 flex flex-col items-center">
+			<div class="curtain-rope h-[24vh]"></div>
+			<div class="curtain-sign relative -mt-1 flex w-64 flex-col items-center px-7 py-8 sm:w-72">
+				<span class="curtain-eyelet absolute -top-2 left-1/2 -translate-x-1/2"></span>
 				<img src={favicon} alt="" class="h-14 w-14 rounded-2xl shadow-lg" />
-				<div class="mt-3 text-4xl font-bold tracking-tight">幕間</div>
+				<div class="mt-3 text-4xl font-bold tracking-tight text-amber-50">幕間</div>
 				<div class="mt-1 font-display text-lg italic text-gold-400">OnStage TW</div>
-				<div class="mt-3 text-xs tracking-[0.25em] text-white/55">台灣戲劇演出，一站看完</div>
+				<div class="mt-3 text-xs tracking-[0.25em] text-amber-100/70">台灣戲劇演出，一站看完</div>
 			</div>
 		</div>
 	</div>
 {/if}
 
-<!-- Top nav: brand on the left, controls on the right -->
-<header class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:px-5">
+<!-- Sticky top: brand nav (always visible) + search + filter toggle -->
+<div
+	class="sticky top-0 z-30 border-b border-curtain-100 bg-curtain-50/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#16100f]/90"
+>
+	<header class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-3 pb-1 sm:px-5">
 	<div class="flex min-w-0 items-center gap-2.5">
 		<img src={favicon} alt="" class="h-9 w-9 shrink-0 rounded-lg shadow-sm" />
 		<div class="flex items-baseline gap-2">
@@ -326,13 +347,8 @@
 			<span class="hidden sm:inline">RSS 訂閱</span>
 		</button>
 	</div>
-</header>
-
-<!-- Sticky filter bar -->
-<div
-	class="sticky top-0 z-20 border-y border-curtain-100 bg-curtain-50/80 backdrop-blur-xl dark:border-white/10 dark:bg-[#16100f]/80"
->
-	<div class="mx-auto max-w-6xl space-y-3 px-5 py-4">
+	</header>
+	<div class="mx-auto max-w-6xl px-4 pb-3 sm:px-5">
 		<div class="flex items-center gap-2">
 			<div class="relative flex-1">
 				<span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -345,19 +361,25 @@
 					class="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-curtain-500 focus:ring-2 focus:ring-curtain-500/20 dark:border-white/15 dark:bg-white/5 dark:text-gray-100"
 				/>
 			</div>
-			<!-- mobile-only toggle for advanced filters -->
 			<button
 				onclick={() => (showFilters = !showFilters)}
 				aria-expanded={showFilters}
-				class="flex shrink-0 items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-600 sm:hidden dark:border-white/15 dark:bg-white/5 dark:text-gray-300 {hasFilters
+				class="flex shrink-0 items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-sm transition dark:bg-white/5 {hasFilters ||
+				showFilters
 					? 'border-curtain-500 text-curtain-600'
-					: ''}"
+					: 'border-gray-300 text-gray-600 dark:border-white/15 dark:text-gray-300'}"
 			>
 				<Icon name="sliders" size={15} /> 篩選
 			</button>
 		</div>
+	</div>
+</div>
 
-		<div class="{showFilters ? 'flex' : 'hidden'} flex-wrap items-center gap-2 sm:flex">
+<!-- Advanced filters: collapsible on every screen -->
+{#if showFilters}
+	<div class="border-b border-curtain-100 bg-curtain-50/70 dark:border-white/10 dark:bg-[#16100f]/70">
+		<div class="mx-auto max-w-6xl space-y-3 px-5 py-3">
+			<div class="flex flex-wrap items-center gap-2">
 			<select bind:value={region} class={selectClass} aria-label="地區">
 				<option value="">全部地區</option>
 				{#each REGION_ORDER as r (r)}<option value={r}>{r}</option>{/each}
@@ -404,8 +426,8 @@
 			</select>
 		</div>
 
-		<div class="{showFilters ? 'flex' : 'hidden'} flex-wrap items-center gap-2 text-sm sm:flex">
-			{#each allSources as s (s)}
+		<div class="flex flex-wrap items-center gap-2 text-sm">
+			{#each presentSources as s (s)}
 				<button
 					onclick={() => toggleSource(s)}
 					class="rounded-full border px-3 py-1 transition {activeSources.has(s)
@@ -426,6 +448,7 @@
 		</div>
 	</div>
 </div>
+{/if}
 
 <!-- RSS subscribe panel -->
 {#if showSubscribe}
@@ -446,7 +469,7 @@
 			</div>
 			<div class="flex flex-wrap items-center gap-2 pt-1">
 				<span class="text-xs text-gray-400">只訂單一來源：</span>
-				{#each allSources as s (s)}
+				{#each presentSources as s (s)}
 					<a
 						href={`/feed-${s}.xml`}
 						class="rounded-full border border-gray-300 px-2.5 py-1 text-xs text-gray-500 transition hover:border-curtain-400 hover:text-curtain-600 dark:border-white/15 dark:text-gray-400"
@@ -479,12 +502,20 @@
 		<p>
 			共 {filtered.length} 檔{#if updatedLabel}<span class="text-gray-400"> · 資料更新於 {updatedLabel}</span>{/if}
 		</p>
-		<a
-			href="/calendar"
-			class="flex shrink-0 items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 font-medium transition hover:border-curtain-400 hover:text-curtain-600 dark:border-white/15"
-		>
-			<Icon name="calendar" size={15} /> 月曆檢視
-		</a>
+		<div class="flex shrink-0 items-center gap-2">
+			<a
+				href="/calendar"
+				class="flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 font-medium transition hover:border-curtain-400 hover:text-curtain-600 dark:border-white/15"
+			>
+				<Icon name="calendar" size={15} /> 月曆
+			</a>
+			<a
+				href="/map"
+				class="flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 font-medium transition hover:border-curtain-400 hover:text-curtain-600 dark:border-white/15"
+			>
+				<Icon name="map-pin" size={15} /> 地圖
+			</a>
+		</div>
 	</div>
 	{#if filtered.length === 0}
 		<p class="py-20 text-center text-gray-400">沒有符合條件的演出，試試調整篩選。</p>
@@ -518,5 +549,10 @@
 	</p>
 	<p class="mx-auto mt-2 max-w-xl px-5">
 		幕間 OnStage TW · 開源戲劇演出聚合 · 資料來自各售票平台公開頁面，著作權屬各主辦單位與售票平台 · 本站不販售門票
+	</p>
+	<p class="mt-2">
+		<a href="/about" class="text-gray-500 underline hover:text-curtain-600 dark:text-gray-300">
+			關於・免責聲明・隱私權政策
+		</a>
 	</p>
 </footer>

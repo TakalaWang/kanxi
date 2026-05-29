@@ -41,7 +41,8 @@ export const SOURCE_COLOR: Record<Source, string> = {
 	udn: 'bg-amber-100 text-amber-800',
 	kham: 'bg-sky-100 text-sky-800',
 	era: 'bg-emerald-100 text-emerald-800',
-	kktix: 'bg-indigo-100 text-indigo-800'
+	kktix: 'bg-indigo-100 text-indigo-800',
+	accupass: 'bg-orange-100 text-orange-800'
 };
 
 export type { Show };

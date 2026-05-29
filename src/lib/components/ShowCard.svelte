@@ -24,7 +24,7 @@
 		type="button"
 		onclick={() => onopen(show)}
 		aria-label={`查看「${show.title}」詳情`}
-		class="absolute inset-0 z-[1] cursor-pointer outline-none"
+		class="absolute inset-0 z-10 cursor-pointer outline-none"
 	></button>
 
 	<div class="relative aspect-[3/2] overflow-hidden bg-curtain-950">
@@ -33,35 +33,36 @@
 				src={show.imageUrl}
 				alt={show.title}
 				loading="lazy"
+				decoding="async"
 				referrerpolicy="no-referrer"
 				class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
 			/>
 		{/if}
 		<div
-			class="absolute inset-0 bg-gradient-to-t from-curtain-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			class="pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-curtain-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 		></div>
 
 		<!-- Spotlight sweep: a soft diagonal highlight glides across the poster on hover.
 		     transform/opacity only; skipped under prefers-reduced-motion. -->
 		<div
 			aria-hidden="true"
-			class="spotlight-sweep pointer-events-none absolute inset-0 z-[1] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+			class="spotlight-sweep pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 		></div>
 
-		<!-- Direct jump to the official ticketing page (above the overlay button) -->
+		<!-- Direct jump to the official ticketing page (kept above the full-card overlay) -->
 		<a
 			href={show.url}
 			target="_blank"
 			rel="noopener noreferrer"
 			aria-label={`前往 ${SOURCE_LABELS[show.source]} 購票`}
-			class="absolute bottom-2 right-2 z-[2] flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-curtain-700 shadow backdrop-blur transition hover:bg-white active:scale-95 dark:bg-black/55 dark:text-gray-50"
+			class="absolute bottom-2 right-2 z-20 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-curtain-700 shadow backdrop-blur transition hover:bg-white active:scale-95 dark:bg-black/55 dark:text-gray-50"
 		>
 			購票 <Icon name="arrow-up-right" size={12} />
 		</a>
 
 		{#if soon}
 			<span
-				class="absolute left-3 top-3 z-[2] flex items-center gap-1 rounded-full bg-gold-400 px-2.5 py-1 text-xs font-semibold text-curtain-950 shadow"
+				class="absolute left-3 top-3 z-20 flex items-center gap-1 rounded-full bg-gold-400 px-2.5 py-1 text-xs font-semibold text-curtain-950 shadow"
 			>
 				<Icon name="clock" size={12} />
 				{onSaleDays === 0 ? '今天開賣' : `${onSaleDays} 天後開賣`}
@@ -74,7 +75,7 @@
 			onclick={() => favorites.toggle(show.id)}
 			aria-label={favorites.has(show.id) ? '取消收藏' : '收藏'}
 			aria-pressed={favorites.has(show.id)}
-			class="absolute right-2 top-2 z-[2] flex h-8 w-8 items-center justify-center rounded-full bg-white/85 shadow backdrop-blur transition hover:bg-white active:scale-90 dark:bg-black/50 {favorites.has(
+			class="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/85 shadow backdrop-blur transition hover:bg-white active:scale-90 dark:bg-black/50 {favorites.has(
 				show.id
 			)
 				? 'text-curtain-600'

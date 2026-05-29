@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SOURCE_LABELS, type Show } from '$lib/types';
-	import { SOURCE_COLOR } from '$lib/format';
+	import { fmtDateRange, SOURCE_COLOR } from '$lib/format';
 	import ShowModal from '$lib/components/ShowModal.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { PageData } from './$types';
@@ -24,20 +24,23 @@
 		}
 	}
 
+	// Performance dates for a show: deduped session dates, else [startDate].
+	function showDates(show: Show): string[] {
+		const dates =
+			show.sessions.length > 0
+				? show.sessions.map((s) => s.date).filter((d): d is string => !!d)
+				: show.startDate
+					? [show.startDate]
+					: [];
+		return [...new Set(dates)];
+	}
+
 	// --- Bucket shows by performance date (YYYY-MM-DD) ---
-	// Each show contributes to every day it plays: its session dates, or [startDate]
-	// when there are no sessions. Shows without any date are ignored. A show appears
-	// only once per day even if it has several sessions on that date.
+	// Each show appears once per day it plays. Shows without any date are ignored.
 	const byDate = $derived.by(() => {
 		const map = new Map<string, Show[]>();
 		for (const show of data.shows) {
-			const dates =
-				show.sessions.length > 0
-					? show.sessions.map((s) => s.date).filter((d): d is string => !!d)
-					: show.startDate
-						? [show.startDate]
-						: [];
-			for (const date of new Set(dates)) {
+			for (const date of showDates(show)) {
 				const bucket = map.get(date);
 				if (bucket) bucket.push(show);
 				else map.set(date, [show]);
@@ -46,42 +49,27 @@
 		return map;
 	});
 
-	// Default month: the current month if it has shows, otherwise the earliest month
-	// that has any performance. Falls back to today when there is no data at all.
-	const earliestKey = $derived.by(() => {
-		const keys = [...byDate.keys()];
-		return keys.length ? keys.sort()[0] : null;
-	});
-
 	const today = new Date();
-	const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+	const todayKey = isoKey(today.getFullYear(), today.getMonth(), today.getDate());
 
-	// `view` holds the year & month (0-based) currently shown.
+	function isoKey(y: number, m0: number, d: number): string {
+		return `${y}-${String(m0 + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+	}
+
+	// `view` holds the year & month (0-based) currently shown. Default: current month
+	// if it has shows, otherwise the earliest month that has any performance.
 	let view = $state<{ year: number; month: number }>(initialView());
 	function initialView() {
-		// Initialised once; byDate isn't reactive at module init so we read data directly.
-		const hasCurrentMonth = data.shows.some((show) => {
-			const dates =
-				show.sessions.length > 0
-					? show.sessions.map((s) => s.date).filter((d): d is string => !!d)
-					: show.startDate
-						? [show.startDate]
-						: [];
-			const prefix = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-			return dates.some((d) => d.startsWith(prefix));
-		});
-		if (hasCurrentMonth) return { year: today.getFullYear(), month: today.getMonth() };
-		// Earliest performance month, computed from raw data.
+		const prefix = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 		let earliest: string | null = null;
+		let hasCurrentMonth = false;
 		for (const show of data.shows) {
-			const dates =
-				show.sessions.length > 0
-					? show.sessions.map((s) => s.date).filter((d): d is string => !!d)
-					: show.startDate
-						? [show.startDate]
-						: [];
-			for (const d of dates) if (!earliest || d < earliest) earliest = d;
+			for (const d of showDates(show)) {
+				if (d.startsWith(prefix)) hasCurrentMonth = true;
+				if (!earliest || d < earliest) earliest = d;
+			}
 		}
+		if (hasCurrentMonth) return { year: today.getFullYear(), month: today.getMonth() };
 		if (earliest) {
 			const [y, m] = earliest.split('-').map(Number);
 			return { year: y, month: m - 1 };
@@ -92,30 +80,44 @@
 	function changeMonth(delta: number) {
 		const d = new Date(view.year, view.month + delta, 1);
 		view = { year: d.getFullYear(), month: d.getMonth() };
+		activeKey = null; // let the new month auto-pick a day
 	}
 	function goToday() {
 		view = { year: today.getFullYear(), month: today.getMonth() };
+		activeKey = byDate.has(todayKey) ? todayKey : null;
 	}
 
 	const monthLabel = $derived(`${view.year} 年 ${view.month + 1} 月`);
 
 	// Build the calendar grid: weeks of 7 cells, Monday-first (Taiwan-friendly).
-	// Each cell is either null (padding from adjacent months) or a date key + shows.
 	const weekdayLabels = ['一', '二', '三', '四', '五', '六', '日'];
 
-	type Cell = { key: string; day: number; shows: Show[]; isToday: boolean } | null;
+	type Cell = {
+		key: string;
+		day: number;
+		shows: Show[];
+		isToday: boolean;
+		isWeekend: boolean;
+	} | null;
 
 	const weeks = $derived.by(() => {
 		const first = new Date(view.year, view.month, 1);
 		const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
-		// JS getDay(): 0=Sun..6=Sat. Convert to Monday-first index (0=Mon..6=Sun).
+		// JS getDay(): 0=Sun..6=Sat → Monday-first index (0=Mon..6=Sun).
 		const lead = (first.getDay() + 6) % 7;
 
 		const cells: Cell[] = [];
 		for (let i = 0; i < lead; i++) cells.push(null);
 		for (let day = 1; day <= daysInMonth; day++) {
-			const key = `${view.year}-${String(view.month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-			cells.push({ key, day, shows: byDate.get(key) ?? [], isToday: key === todayKey });
+			const key = isoKey(view.year, view.month, day);
+			const weekdayIdx = (lead + day - 1) % 7; // 0=Mon..6=Sun
+			cells.push({
+				key,
+				day,
+				shows: byDate.get(key) ?? [],
+				isToday: key === todayKey,
+				isWeekend: weekdayIdx >= 5
+			});
 		}
 		while (cells.length % 7 !== 0) cells.push(null);
 
@@ -125,14 +127,51 @@
 	});
 
 	// Count of shows in the visible month (deduped per day, summed across days).
-	const monthCount = $derived(
-		weeks.flat().reduce((n, c) => n + (c ? c.shows.length : 0), 0)
-	);
+	const monthCount = $derived(weeks.flat().reduce((n, c) => n + (c ? c.shows.length : 0), 0));
+
+	// --- Day detail panel ---
+	// activeKey = currently selected day. Reset to null on month change, then a
+	// $derived effect resolves it to the first day-with-shows in the visible month.
+	let activeKey = $state<string | null>(null);
+
+	const resolvedKey = $derived.by(() => {
+		if (activeKey && byDate.has(activeKey)) {
+			// Keep the selection only if it belongs to the visible month.
+			const prefix = `${view.year}-${String(view.month + 1).padStart(2, '0')}`;
+			if (activeKey.startsWith(prefix)) return activeKey;
+		}
+		// Auto-pick: today if it's in view & has shows, else the first day with shows.
+		if (byDate.has(todayKey) && todayKey.startsWith(`${view.year}-${String(view.month + 1).padStart(2, '0')}`))
+			return todayKey;
+		for (const week of weeks) for (const cell of week) if (cell && cell.shows.length) return cell.key;
+		return null;
+	});
+
+	const activeShows = $derived(resolvedKey ? (byDate.get(resolvedKey) ?? []) : []);
+
+	const activeLabel = $derived.by(() => {
+		if (!resolvedKey) return null;
+		const [y, m, d] = resolvedKey.split('-').map(Number);
+		const dow = ['日', '一', '二', '三', '四', '五', '六'][new Date(y, m - 1, d).getDay()];
+		return `${m} 月 ${d} 日（週${dow}）`;
+	});
+
+	function selectDay(cell: NonNullable<Cell>) {
+		if (!cell.shows.length) return;
+		activeKey = cell.key;
+	}
 
 	// Small dot colour per source, reusing SOURCE_COLOR's text-* token as the bg.
-	function dotClass(show: Show): string {
-		const token = SOURCE_COLOR[show.source].split(' ').find((c) => c.startsWith('text-'));
+	function dotClass(source: Show['source']): string {
+		const token = SOURCE_COLOR[source].split(' ').find((c) => c.startsWith('text-'));
 		return token ? token.replace('text-', 'bg-') : 'bg-gray-400';
+	}
+
+	// Unique source dots for a cell, capped, for the compact grid indicator.
+	function cellSources(shows: Show[]): Show['source'][] {
+		const seen = new Set<Show['source']>();
+		for (const s of shows) seen.add(s.source);
+		return [...seen];
 	}
 
 	const updatedLabel = $derived(
@@ -169,7 +208,7 @@
 		</a>
 	</div>
 	<div class="flex shrink-0 items-center gap-2">
-		<!-- View switch: list vs calendar -->
+		<!-- View switch: list / calendar / map -->
 		<div
 			class="flex items-center rounded-full border border-gray-200 bg-white p-0.5 text-sm dark:border-white/15 dark:bg-white/5"
 		>
@@ -184,6 +223,12 @@
 			>
 				<Icon name="calendar" size={14} /> 月曆
 			</span>
+			<a
+				href="/map"
+				class="rounded-full px-3 py-1.5 text-gray-600 transition hover:text-curtain-600 dark:text-gray-300"
+			>
+				地圖
+			</a>
 		</div>
 		<button
 			onclick={toggleTheme}
@@ -195,9 +240,9 @@
 	</div>
 </header>
 
-<main class="mx-auto max-w-6xl px-2 py-4 sm:px-5 sm:py-6">
+<main class="mx-auto max-w-6xl px-3 py-4 sm:px-5 sm:py-6">
 	<!-- Month controls -->
-	<div class="mb-4 flex items-center justify-between gap-3 px-2 sm:px-0">
+	<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
 		<div class="flex items-center gap-2">
 			<button
 				onclick={() => changeMonth(-1)}
@@ -206,7 +251,9 @@
 			>
 				‹
 			</button>
-			<h2 class="min-w-[7.5rem] text-center text-lg font-semibold text-gray-900 sm:text-xl dark:text-gray-100">
+			<h2
+				class="min-w-[7.5rem] text-center text-lg font-semibold text-gray-900 sm:text-xl dark:text-gray-100"
+			>
 				{monthLabel}
 			</h2>
 			<button
@@ -223,86 +270,150 @@
 				今天
 			</button>
 		</div>
-		<p class="text-sm text-gray-500 dark:text-gray-400">
-			本月 {monthCount} 場{#if updatedLabel}<span class="hidden text-gray-400 sm:inline"> · 更新於 {updatedLabel}</span>{/if}
-		</p>
+		<div class="flex items-center gap-2 text-sm">
+			<span
+				class="inline-flex items-center gap-1 rounded-full bg-curtain-50 px-2.5 py-1 font-medium text-curtain-700 dark:bg-white/10 dark:text-curtain-300"
+			>
+				本月 {monthCount} 場
+			</span>
+			{#if updatedLabel}
+				<span class="hidden text-gray-400 sm:inline">更新於 {updatedLabel}</span>
+			{/if}
+		</div>
 	</div>
 
-	<!-- Weekday header -->
-	<div class="grid grid-cols-7 gap-px text-center text-xs font-medium text-gray-400 dark:text-gray-500">
-		{#each weekdayLabels as w, i (w)}
-			<div class="py-1.5 {i >= 5 ? 'text-curtain-500 dark:text-curtain-400' : ''}">{w}</div>
-		{/each}
-	</div>
-
-	<!-- Calendar grid -->
-	<div class="overflow-hidden rounded-2xl border border-curtain-100 bg-curtain-100 dark:border-white/10 dark:bg-white/10">
-		{#each weeks as week, wi (wi)}
-			<div class="grid grid-cols-7 gap-px">
-				{#each week as cell, ci (ci)}
-					{#if cell}
-						<div
-							class="flex min-h-[4.5rem] flex-col bg-white p-1 sm:min-h-[7rem] sm:p-1.5 dark:bg-[#1e1716] {cell.isToday
-								? 'ring-1 ring-inset ring-curtain-400'
-								: ''}"
-						>
-							<div
-								class="mb-0.5 flex h-5 w-5 items-center justify-center self-start rounded-full text-xs sm:text-sm {cell.isToday
-									? 'bg-curtain-600 font-semibold text-white'
-									: 'text-gray-500 dark:text-gray-400'}"
-							>
-								{cell.day}
-							</div>
-
-							<!-- Mobile: just coloured dots (no horizontal scroll). -->
-							<div class="flex flex-wrap gap-0.5 sm:hidden">
-								{#each cell.shows.slice(0, 4) as show (show.id)}
-									<button
-										type="button"
-										onclick={() => (selected = show)}
-										aria-label={show.title}
-										class="h-1.5 w-1.5 rounded-full {dotClass(show)}"
-									></button>
-								{/each}
-								{#if cell.shows.length > 4}
-									<span class="text-[10px] leading-none text-gray-400">+{cell.shows.length - 4}</span>
-								{/if}
-							</div>
-
-							<!-- Desktop / tablet: title chips, max 3, then +N. -->
-							<div class="hidden flex-col gap-0.5 sm:flex">
-								{#each cell.shows.slice(0, 3) as show (show.id)}
-									<button
-										type="button"
-										onclick={() => (selected = show)}
-										title={show.title}
-										class="flex items-center gap-1 rounded px-1 py-0.5 text-left text-xs leading-tight text-gray-700 transition hover:bg-curtain-50 dark:text-gray-200 dark:hover:bg-white/5"
-									>
-										<span class="h-1.5 w-1.5 shrink-0 rounded-full {dotClass(show)}"></span>
-										<span class="truncate">{show.title}</span>
-									</button>
-								{/each}
-								{#if cell.shows.length > 3}
-									<span class="px-1 text-[11px] text-gray-400">+{cell.shows.length - 3} 場</span>
-								{/if}
-							</div>
-						</div>
-					{:else}
-						<div class="min-h-[4.5rem] bg-gray-50 sm:min-h-[7rem] dark:bg-[#16100f]"></div>
-					{/if}
+	<!-- Two-column on large screens: calendar grid + day detail panel. -->
+	<div class="grid gap-5 lg:grid-cols-[1fr_22rem]">
+		<div>
+			<!-- Weekday header -->
+			<div
+				class="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-400 dark:text-gray-500"
+			>
+				{#each weekdayLabels as w, i (w)}
+					<div class="py-1.5 {i >= 5 ? 'text-curtain-500 dark:text-curtain-400' : ''}">{w}</div>
 				{/each}
 			</div>
-		{/each}
-	</div>
 
-	<!-- Source legend -->
-	<div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 px-2 text-xs text-gray-500 sm:px-0 dark:text-gray-400">
-		{#each Object.entries(SOURCE_LABELS) as [source, label] (source)}
-			<span class="flex items-center gap-1.5">
-				<span class="h-2 w-2 rounded-full {dotClass({ source } as Show)}"></span>
-				{label}
-			</span>
-		{/each}
+			<!-- Calendar grid -->
+			<div class="grid grid-cols-7 gap-1 sm:gap-1.5">
+				{#each weeks as week, wi (wi)}
+					{#each week as cell, ci (ci)}
+						{#if cell}
+							{@const has = cell.shows.length > 0}
+							{@const isActive = cell.key === resolvedKey}
+							<button
+								type="button"
+								onclick={() => selectDay(cell)}
+								disabled={!has}
+								aria-pressed={isActive}
+								aria-label={has
+									? `${view.month + 1} 月 ${cell.day} 日，${cell.shows.length} 場演出`
+									: `${view.month + 1} 月 ${cell.day} 日`}
+								class="group relative flex aspect-square flex-col items-center justify-start rounded-xl border p-1 transition motion-safe:duration-150 sm:aspect-[4/3] sm:p-2
+									{has
+									? 'cursor-pointer border-curtain-100 bg-white hover:-translate-y-0.5 hover:border-curtain-300 hover:shadow-md dark:border-white/10 dark:bg-[#1e1716] dark:hover:border-white/25'
+									: 'cursor-default border-transparent bg-gray-50/60 dark:bg-white/[0.03]'}
+									{isActive
+									? 'ring-2 ring-curtain-500 ring-offset-1 ring-offset-white dark:ring-offset-[#16100f]'
+									: ''}"
+							>
+								<!-- Day number -->
+								<span
+									class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium sm:h-7 sm:w-7 sm:text-sm
+										{cell.isToday
+										? 'bg-curtain-600 font-bold text-white'
+										: has
+											? cell.isWeekend
+												? 'text-curtain-600 dark:text-curtain-400'
+												: 'text-gray-700 dark:text-gray-200'
+											: cell.isWeekend
+												? 'text-curtain-300 dark:text-curtain-500/60'
+												: 'text-gray-300 dark:text-gray-600'}"
+								>
+									{cell.day}
+								</span>
+
+								{#if has}
+									<!-- Source dots (all breakpoints) -->
+									<span class="mt-1 flex flex-wrap items-center justify-center gap-0.5">
+										{#each cellSources(cell.shows).slice(0, 4) as src (src)}
+											<span class="h-1.5 w-1.5 rounded-full {dotClass(src)}"></span>
+										{/each}
+									</span>
+									<!-- Count badge: bottom on desktop, hidden on phones (dots suffice) -->
+									<span
+										class="mt-auto hidden rounded-full bg-curtain-50 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-curtain-700 sm:inline-block dark:bg-white/10 dark:text-curtain-300"
+									>
+										{cell.shows.length} 場
+									</span>
+								{/if}
+							</button>
+						{:else}
+							<div class="aspect-square sm:aspect-[4/3]"></div>
+						{/if}
+					{/each}
+				{/each}
+			</div>
+
+			<!-- Source legend -->
+			<div
+				class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500 dark:text-gray-400"
+			>
+				{#each Object.entries(SOURCE_LABELS) as [source, label] (source)}
+					<span class="flex items-center gap-1.5">
+						<span class="h-2 w-2 rounded-full {dotClass(source as Show['source'])}"></span>
+						{label}
+					</span>
+				{/each}
+			</div>
+		</div>
+
+		<!-- Day detail panel: all shows on the selected day. -->
+		<aside
+			class="rounded-2xl border border-curtain-100 bg-white p-4 lg:sticky lg:top-4 lg:max-h-[80vh] lg:self-start lg:overflow-y-auto dark:border-white/10 dark:bg-[#1e1716]"
+		>
+			{#if resolvedKey}
+				<div class="mb-3">
+					<p class="font-semibold text-gray-900 dark:text-gray-100">{activeLabel}</p>
+					<p class="text-xs text-gray-400">{activeShows.length} 檔演出</p>
+				</div>
+				<ul class="space-y-1.5">
+					{#each activeShows as show (show.id)}
+						<li>
+							<button
+								type="button"
+								onclick={() => (selected = show)}
+								class="flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left transition hover:bg-curtain-50 dark:hover:bg-white/5"
+							>
+								<span class="mt-1.5 h-2 w-2 shrink-0 rounded-full {dotClass(show.source)}"></span>
+								<span class="min-w-0 flex-1">
+									<span
+										class="line-clamp-2 text-sm font-medium text-gray-800 dark:text-gray-100"
+										>{show.title}</span
+									>
+									<span class="mt-0.5 block truncate text-xs text-gray-400">
+										{#if show.venue}{show.venue}{#if show.city} · {show.city}{/if}{:else if show.city}{show.city}{:else}{fmtDateRange(show)}{/if}
+									</span>
+									<span
+										class="mt-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-medium {SOURCE_COLOR[
+											show.source
+										]}"
+									>
+										{SOURCE_LABELS[show.source]}
+									</span>
+								</span>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<div class="flex flex-col items-center justify-center py-10 text-center">
+					<Icon name="calendar" size={28} class="text-curtain-300 dark:text-curtain-500/60" />
+					<p class="mt-3 text-sm text-gray-500 dark:text-gray-400">本月尚無演出</p>
+					<p class="mt-1 text-xs text-gray-400">試試切換到其他月份</p>
+				</div>
+			{/if}
+		</aside>
 	</div>
 </main>
 
