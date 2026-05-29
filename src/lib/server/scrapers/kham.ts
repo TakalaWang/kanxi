@@ -1,6 +1,6 @@
 import { parse } from 'node-html-parser';
 import type { Show } from '../../types';
-import { politeFetch, sleep, extractDateRange, extractOnSale } from './util';
+import { politeFetch, sleep, extractDateRange, extractOnSale, classifyGenre } from './util';
 
 const LIST_URL = (cat: string) =>
 	`https://kham.com.tw/application/UTK01/UTK0101_06.aspx?TYPE=1&CATEGORY=${cat}`;
@@ -67,7 +67,7 @@ export async function scrapeKham(): Promise<Show[]> {
 			source: 'kham',
 			sourceId: item.id,
 			title: item.title,
-			category: item.category,
+			category: classifyGenre(item.title, item.category),
 			startDate,
 			endDate,
 			venue,
@@ -77,7 +77,6 @@ export async function scrapeKham(): Promise<Show[]> {
 			maxPrice: null,
 			imageUrl: item.image,
 			url: DETAIL_URL(item.id),
-			heuristic: false,
 			description: null,
 			organizer: null,
 			sessions: []

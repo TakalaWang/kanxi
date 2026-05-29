@@ -1,10 +1,10 @@
-# OnStage TW（看戲）
+# OnStage TW（幕間）
 
-> See every **theatre** performance in Taiwan in one place. Aggregates drama listings from OPENTIX, udn, KHAM, ERA and tixCraft, with search, filtering, and an RSS feed to follow new on-sales.
+> See every **theatre** performance in Taiwan in one place. Aggregates drama listings from OPENTIX, udn, KHAM and ERA, with search, filtering, and an RSS feed to follow new on-sales.
 
 🔗 **Live site: [onstage-tw.vercel.app](https://onstage-tw.vercel.app)**
 
-Taiwan's ticketing scene is fragmented: some plays are on OPENTIX, others on KHAM, ERA, udn, or tixCraft. Finding "what's on and when it goes on sale" means checking each site one by one. **OnStage TW** pulls the theatre listings from all of them onto a single page so you can browse once and subscribe via RSS.
+Taiwan's ticketing scene is fragmented: some plays are on OPENTIX, others on KHAM, ERA, or udn. Finding "what's on and when it goes on sale" means checking each site one by one. **OnStage TW** pulls the theatre listings from all of them onto a single page so you can browse once and subscribe via RSS.
 
 It aggregates **theatre only** (drama, stage plays, traditional opera, puppetry, musicals, children's theatre…) and **excludes concerts and music recitals**.
 
@@ -24,9 +24,8 @@ It aggregates **theatre only** (drama, stage plays, traditional opera, puppetry,
 | udn | WebMethod (HTML fragment) | `Category=116` | — |
 | KHAM | HTML + detail page | `CATEGORY=116, 80` | from page text |
 | ERA | HTML (list only) | `CATEGORY=116` | — |
-| tixCraft | HTML list + keyword heuristic | none — guessed by keyword (flagged "heuristic") | — |
 
-> tixCraft has no theatre category and hides on-sale times behind anti-bot detail pages, so we only best-effort scrape its `/activity` list and pick out theatre by keyword. If it blocks us, that source is skipped without affecting the others.
+> Shows are further classified into sub-genres (戲曲 / 偶戲 / 音樂劇 / 兒童親子 / 相聲 / 舞台劇) from their titles to power the category filter. tixCraft was evaluated but dropped — its catalogue is concerts/tours, not theatre.
 
 ## Architecture
 

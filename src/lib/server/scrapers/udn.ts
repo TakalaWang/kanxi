@@ -1,6 +1,6 @@
 import { parse } from 'node-html-parser';
 import type { Show } from '../../types';
-import { politeFetch } from './util';
+import { politeFetch, classifyGenre } from './util';
 
 const API =
 	'https://tickets.udnfunlife.com/Application/UTK01/UTK0101_009.aspx/Product_Category_List';
@@ -49,7 +49,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 			source: 'udn',
 			sourceId: id,
 			title,
-			category: '戲劇',
+			category: classifyGenre(title),
 			startDate: startDate?.slice(0, 10) ?? null,
 			endDate: endDate?.slice(0, 10) ?? null,
 			venue,
@@ -59,7 +59,6 @@ export async function scrapeUdn(): Promise<Show[]> {
 			maxPrice: null,
 			imageUrl: img,
 			url: DETAIL_URL(id),
-			heuristic: false,
 			description: null,
 			organizer: null,
 			sessions: []

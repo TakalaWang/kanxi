@@ -3,7 +3,6 @@ import { scrapeOpenTix } from './opentix';
 import { scrapeUdn } from './udn';
 import { scrapeKham } from './kham';
 import { scrapeEra } from './era';
-import { scrapeTixcraft } from './tixcraft';
 
 type Scraper = { source: Source; run: () => Promise<Show[]> };
 
@@ -11,8 +10,7 @@ const SCRAPERS: Scraper[] = [
 	{ source: 'opentix', run: scrapeOpenTix },
 	{ source: 'udn', run: scrapeUdn },
 	{ source: 'kham', run: scrapeKham },
-	{ source: 'era', run: scrapeEra },
-	{ source: 'tixcraft', run: scrapeTixcraft }
+	{ source: 'era', run: scrapeEra }
 ];
 
 export interface ScrapeResult {

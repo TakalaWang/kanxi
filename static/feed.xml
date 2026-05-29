@@ -3,15 +3,15 @@
   <channel>
     <title>OnStage TW — Taiwan theatre listings</title>
     <link>https://onstage-tw.vercel.app</link>
-    <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and tixCraft.</description>
+    <description>Aggregated theatre performances from OPENTIX, udn, KHAM and ERA.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 29 May 2026 06:28:30 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 07:59:35 GMT</lastBuildDate>
     <item>
       <title>超人力霸王舞台劇In Taiwan 2026</title>
       <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P19Q1GAI</link>
       <guid isPermaLink="false">era:P19Q1GAI</guid>
       <pubDate>Thu, 23 Jul 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>舞台劇</category>
       <description>Date: 2026-07-24 – 2026-08-16 · Source: 年代售票</description>
     </item>
     <item>
@@ -19,7 +19,7 @@
       <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P19I4966</link>
       <guid isPermaLink="false">era:P19I4966</guid>
       <pubDate>Fri, 10 Jul 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>兒童親子</category>
       <description>Date: 2026-07-11 – 2026-11-22 · Source: 年代售票</description>
     </item>
     <item>
@@ -27,7 +27,7 @@
       <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P192ILGJ</link>
       <guid isPermaLink="false">era:P192ILGJ</guid>
       <pubDate>Fri, 12 Jun 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>舞台劇</category>
       <description>Date: 2026-06-13 – 2026-08-29 · Source: 年代售票</description>
     </item>
     <item>
@@ -107,7 +107,7 @@
       <link>https://tickets.udnfunlife.com/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P1AEBJG5</link>
       <guid isPermaLink="false">udn:P1AEBJG5</guid>
       <pubDate>Tue, 26 May 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-05-27 – 2026-11-29 · Source: udn 售票網</description>
     </item>
     <item>
@@ -131,7 +131,7 @@
       <link>https://www.opentix.life/event/2058773455445823489</link>
       <guid isPermaLink="false">opentix:2058773455445823489</guid>
       <pubDate>Tue, 26 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-11-27 – 2026-11-29 · Venue: 駁二正港小劇場, 高雄市 · On sale: 2026-05-26 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -139,7 +139,7 @@
       <link>https://www.opentix.life/event/2054406826574860289</link>
       <guid isPermaLink="false">opentix:2054406826574860289</guid>
       <pubDate>Mon, 25 May 2026 05:30:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-09-04 – 2026-09-13 · Venue: 西門紅樓二樓劇場, 臺北市 · On sale: 2026-05-25 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -147,7 +147,7 @@
       <link>https://www.opentix.life/event/2054129876962353153</link>
       <guid isPermaLink="false">opentix:2054129876962353153</guid>
       <pubDate>Mon, 25 May 2026 04:30:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-07-31 – 2026-08-09 · Venue: 新北市藝文中心演藝廳, 新北市 · On sale: 2026-05-25 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -187,7 +187,7 @@
       <link>https://www.opentix.life/event/2051557579253776385</link>
       <guid isPermaLink="false">opentix:2051557579253776385</guid>
       <pubDate>Mon, 25 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-09-05 – 2026-09-20 · Venue: PLAYground 南村劇場．青鳥．有.設計, 臺北市 · On sale: 2026-05-25 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -195,7 +195,7 @@
       <link>https://www.opentix.life/event/2036014871218495489</link>
       <guid isPermaLink="false">opentix:2036014871218495489</guid>
       <pubDate>Mon, 25 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>偶戲</category>
       <description>Date: 2026-10-17 · Venue: 大稻埕戲苑曲藝場, 臺北市 · On sale: 2026-05-25 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -283,7 +283,7 @@
       <link>https://www.opentix.life/event/2054052615857229824</link>
       <guid isPermaLink="false">opentix:2054052615857229824</guid>
       <pubDate>Tue, 19 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-07-25 · Venue: 臺東縣政府文化處藝文中心演藝廳, 臺東縣 · On sale: 2026-05-19 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -307,7 +307,7 @@
       <link>https://www.opentix.life/event/2052621362491457537</link>
       <guid isPermaLink="false">opentix:2052621362491457537</guid>
       <pubDate>Tue, 19 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-11-06 – 2026-11-08 · Venue: 臺灣大學藝文中心遊心劇場, 臺北市 · On sale: 2026-05-19 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -339,7 +339,7 @@
       <link>https://www.opentix.life/event/2053677047754907649</link>
       <guid isPermaLink="false">opentix:2053677047754907649</guid>
       <pubDate>Mon, 18 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-09-27 · Venue: 國家戲劇院, 臺北市 · On sale: 2026-05-18 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -355,7 +355,7 @@
       <link>https://www.opentix.life/event/2051483080915320833</link>
       <guid isPermaLink="false">opentix:2051483080915320833</guid>
       <pubDate>Sun, 17 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-10-24 – 2026-10-25 · Venue: 臺北市客家音樂戲劇中心二樓劇場, 臺北市 · On sale: 2026-05-17 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -459,7 +459,7 @@
       <link>https://www.opentix.life/event/2054095506013016065</link>
       <guid isPermaLink="false">opentix:2054095506013016065</guid>
       <pubDate>Fri, 15 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>偶戲</category>
       <description>Date: 2026-12-05 – 2026-12-06 · Venue: 華山1914文創園區東3B館 烏梅劇院, 臺北市 · On sale: 2026-05-15 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -467,7 +467,7 @@
       <link>https://www.opentix.life/event/2048966343179272192</link>
       <guid isPermaLink="false">opentix:2048966343179272192</guid>
       <pubDate>Thu, 14 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>相聲</category>
       <description>Date: 2026-08-14 – 2026-10-18 · Venue: 臺北表演藝術中心 球劇場, 臺北市 · On sale: 2026-05-14 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -483,7 +483,7 @@
       <link>https://www.opentix.life/event/2039660562763821057</link>
       <guid isPermaLink="false">opentix:2039660562763821057</guid>
       <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-08-19 · Venue: 衛武營國家藝術文化中心表演廳, 高雄市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -531,7 +531,7 @@
       <link>https://www.opentix.life/event/2051512675202924545</link>
       <guid isPermaLink="false">opentix:2051512675202924545</guid>
       <pubDate>Tue, 12 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-08-29 – 2026-08-30 · Venue: 澎湖縣演藝廳, 澎湖縣 · On sale: 2026-05-12 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -579,7 +579,7 @@
       <link>https://www.opentix.life/event/2051591825313611777</link>
       <guid isPermaLink="false">opentix:2051591825313611777</guid>
       <pubDate>Fri, 08 May 2026 12:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-08-08 – 2026-10-25 · Venue: 國家戲劇院, 臺北市 · On sale: 2026-05-08 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -595,7 +595,7 @@
       <link>https://www.opentix.life/event/2051488668716310528</link>
       <guid isPermaLink="false">opentix:2051488668716310528</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>偶戲</category>
       <description>Date: 2026-08-08 · Venue: 雲林縣北港文化中心家湖廳, 雲林縣 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -603,7 +603,7 @@
       <link>https://www.opentix.life/event/2049035765776547841</link>
       <guid isPermaLink="false">opentix:2049035765776547841</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-08-29 – 2026-08-30 · Venue: 臺灣戲曲中心多功能廳, 臺北市 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -611,7 +611,7 @@
       <link>https://www.opentix.life/event/2049700100253523969</link>
       <guid isPermaLink="false">opentix:2049700100253523969</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-09-05 – 2026-09-06 · Venue: 臺灣戲曲中心多功能廳, 臺北市 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -619,7 +619,7 @@
       <link>https://www.opentix.life/event/2049705089897320449</link>
       <guid isPermaLink="false">opentix:2049705089897320449</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-09-11 – 2026-09-13 · Venue: 臺灣戲曲中心多功能廳, 臺北市 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -627,7 +627,7 @@
       <link>https://www.opentix.life/event/2049734249538494465</link>
       <guid isPermaLink="false">opentix:2049734249538494465</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-09-19 – 2026-09-20 · Venue: 臺灣戲曲中心多功能廳, 臺北市 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -635,7 +635,7 @@
       <link>https://www.opentix.life/event/2049738802191040513</link>
       <guid isPermaLink="false">opentix:2049738802191040513</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-09-26 – 2026-09-27 · Venue: 臺灣戲曲中心多功能廳, 臺北市 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -643,7 +643,7 @@
       <link>https://www.opentix.life/event/2049746347755511809</link>
       <guid isPermaLink="false">opentix:2049746347755511809</guid>
       <pubDate>Wed, 06 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-10-02 – 2026-10-04 · Venue: 臺灣戲曲中心多功能廳, 臺北市 · On sale: 2026-05-06 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -739,7 +739,7 @@
       <link>https://www.opentix.life/event/2039548820209590273</link>
       <guid isPermaLink="false">opentix:2039548820209590273</guid>
       <pubDate>Fri, 01 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>戲曲</category>
       <description>Date: 2026-08-16 · Venue: 大稻埕戲苑, 臺北市 · On sale: 2026-05-01 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -779,7 +779,7 @@
       <link>https://www.opentix.life/event/2046477133841158145</link>
       <guid isPermaLink="false">opentix:2046477133841158145</guid>
       <pubDate>Thu, 30 Apr 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-09-04 – 2026-09-06 · Venue: 臺北市藝文推廣處城市舞台, 臺北市 · On sale: 2026-04-30 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
@@ -803,7 +803,7 @@
       <link>https://www.opentix.life/event/2045067828311797761</link>
       <guid isPermaLink="false">opentix:2045067828311797761</guid>
       <pubDate>Tue, 28 Apr 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
+      <category>音樂劇</category>
       <description>Date: 2026-07-18 – 2026-07-19 · Venue: 臺中國家歌劇院中劇院, 臺中市 · On sale: 2026-04-28 · Source: OPENTIX 兩廳院</description>
     </item>
   </channel>

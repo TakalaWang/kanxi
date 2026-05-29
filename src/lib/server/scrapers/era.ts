@@ -1,6 +1,6 @@
 import { parse } from 'node-html-parser';
 import type { Show } from '../../types';
-import { politeFetch, extractDateRange } from './util';
+import { politeFetch, extractDateRange, classifyGenre } from './util';
 
 const LIST_URL = 'https://ticket.com.tw/application/UTK01/UTK0101_06.aspx?TYPE=1&CATEGORY=116';
 const DETAIL_URL = (id: string) =>
@@ -33,7 +33,7 @@ export async function scrapeEra(): Promise<Show[]> {
 			source: 'era',
 			sourceId: id,
 			title,
-			category: '戲劇',
+			category: classifyGenre(title),
 			startDate: range.start,
 			endDate: range.end,
 			venue: null,
@@ -43,7 +43,6 @@ export async function scrapeEra(): Promise<Show[]> {
 			maxPrice: null,
 			imageUrl: img,
 			url: DETAIL_URL(id),
-			heuristic: false,
 			description: null,
 			organizer: null,
 			sessions: []

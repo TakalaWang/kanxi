@@ -3,6 +3,7 @@
 	import ShowCard from '$lib/components/ShowCard.svelte';
 	import ShowModal from '$lib/components/ShowModal.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	import favicon from '$lib/assets/favicon.svg';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -13,13 +14,14 @@
 	let activeSources = $state<Set<Source>>(new Set());
 	let city = $state('');
 	let category = $state('');
-	let dateRange = $state<'all' | 'week' | 'month' | 'quarter'>('all');
-	let onSale = $state<'all' | 'soon' | 'available'>('all');
-	let includeHeuristic = $state(true);
+	let fromDate = $state('');
+	let toDate = $state('');
+	let onSale = $state<'all' | 'available' | 'upcoming' | 'none'>('all');
 	let sort = $state<'date' | 'onsale'>('date');
 	let selected = $state<Show | null>(null);
 	let showSubscribe = $state(false);
-	let visible = $state(60); // render in batches for fast first paint + a clean entrance stagger
+	let visible = $state(48); // grows as the user scrolls (infinite scroll)
+	let sentinel = $state<HTMLElement | null>(null);
 
 	const cities = $derived(
 		[...new Set(data.shows.map((s) => s.city).filter((c): c is string => !!c))].sort()
@@ -34,34 +36,21 @@
 		activeSources = next;
 	}
 
-	function isoOffsetDays(days: number): string {
-		return new Date(Date.now() + days * 86_400_000).toISOString();
-	}
-
 	const filtered = $derived.by(() => {
 		const q = query.trim().toLowerCase();
 		const nowIso = new Date().toISOString();
-		const windowEnd =
-			dateRange === 'week'
-				? isoOffsetDays(7).slice(0, 10)
-				: dateRange === 'month'
-					? isoOffsetDays(31).slice(0, 10)
-					: dateRange === 'quarter'
-						? isoOffsetDays(92).slice(0, 10)
-						: null;
-		const soonEnd = isoOffsetDays(14);
 
 		let list = data.shows.filter((s) => {
-			if (!includeHeuristic && s.heuristic) return false;
 			if (activeSources.size && !activeSources.has(s.source)) return false;
 			if (city && s.city !== city) return false;
 			if (category && s.category !== category) return false;
-			if (windowEnd && s.startDate && s.startDate > windowEnd) return false;
-			if (onSale === 'soon') {
-				if (!s.onSaleAt || s.onSaleAt < nowIso || s.onSaleAt > soonEnd) return false;
-			} else if (onSale === 'available') {
-				if (!s.onSaleAt || s.onSaleAt > nowIso) return false;
-			}
+			// date-range overlap with the show's run
+			if (fromDate && (s.endDate ?? s.startDate ?? '9999-12-31') < fromDate) return false;
+			if (toDate && (s.startDate ?? s.endDate ?? '0000-01-01') > toDate) return false;
+			// on-sale status
+			if (onSale === 'available' && !(s.onSaleAt && s.onSaleAt <= nowIso)) return false;
+			if (onSale === 'upcoming' && !(s.onSaleAt && s.onSaleAt > nowIso)) return false;
+			if (onSale === 'none' && s.onSaleAt) return false;
 			if (q) {
 				const hay =
 					`${s.title} ${s.venue ?? ''} ${s.category ?? ''} ${s.organizer ?? ''}`.toLowerCase();
@@ -77,19 +66,37 @@
 		return list;
 	});
 
+	const hasFilters = $derived(
+		!!query || activeSources.size > 0 || !!city || !!category || !!fromDate || !!toDate || onSale !== 'all'
+	);
+
 	function resetFilters() {
 		query = '';
 		activeSources = new Set();
 		city = '';
 		category = '';
-		dateRange = 'all';
+		fromDate = '';
+		toDate = '';
 		onSale = 'all';
 	}
 
-	// Reset the visible batch whenever the filtered result changes.
+	// Reset the visible window whenever the result set changes.
 	$effect(() => {
 		filtered.length;
-		visible = 60;
+		visible = 48;
+	});
+
+	// Infinite scroll: grow `visible` as the sentinel nears the viewport.
+	$effect(() => {
+		if (!sentinel) return;
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) visible += 36;
+			},
+			{ rootMargin: '800px' }
+		);
+		io.observe(sentinel);
+		return () => io.disconnect();
 	});
 
 	const updatedLabel = $derived(
@@ -107,19 +114,20 @@
 
 	const selectClass =
 		'rounded-full border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-700 outline-none transition hover:border-curtain-400 focus:border-curtain-500 cursor-pointer';
+	const dateClass =
+		'rounded-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition hover:border-curtain-400 focus:border-curtain-500';
 </script>
 
 <svelte:head>
-	<title>看戲 — 台灣戲劇演出整合</title>
+	<title>幕間 — 台灣戲劇演出整合</title>
 	<meta
 		name="description"
-		content="一個地方看完 OPENTIX、udn、寬宏、年代、拓元 的戲劇演出。搜尋、過濾、RSS 訂閱開賣資訊。"
+		content="一個地方看完 OPENTIX、udn、寬宏、年代 的戲劇演出。搜尋、過濾、用 RSS 追蹤開賣。"
 	/>
 	<link rel="alternate" type="application/rss+xml" title="OnStage TW" href="/feed.xml" />
 </svelte:head>
 
 <header class="relative overflow-hidden bg-curtain-950 text-white">
-	<!-- drifting spotlight -->
 	<div
 		class="animate-spotlight pointer-events-none absolute -top-1/3 left-1/4 h-[120%] w-[60%] rounded-full opacity-70 blur-3xl"
 		style="background: radial-gradient(circle, rgba(246,183,60,0.35), rgba(200,50,58,0.25) 45%, transparent 70%)"
@@ -131,26 +139,23 @@
 
 	<div class="relative mx-auto max-w-6xl px-5 py-16 sm:py-20">
 		<p class="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-gold-400">Taiwan Theatre</p>
-		<div class="flex flex-wrap items-end gap-x-4 gap-y-1">
-			<h1 class="text-6xl font-bold leading-none tracking-tight sm:text-7xl">看戲</h1>
+		<div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+			<img src={favicon} alt="" class="h-11 w-11 rounded-xl shadow-lg sm:h-12 sm:w-12" />
+			<h1 class="text-6xl font-bold leading-none tracking-tight sm:text-7xl">幕間</h1>
 			<span class="font-display text-2xl italic text-curtain-100/70 sm:text-3xl">OnStage TW</span>
 		</div>
-		<p class="mt-4 max-w-xl text-lg text-curtain-100/85">
-			一個地方看完台灣所有戲劇演出。整合五大售票平台，搜尋、過濾、用 RSS 追蹤開賣。
-		</p>
+		<p class="mt-5 max-w-xl text-lg text-curtain-100/85">台灣戲劇演出，一站看完。</p>
 
 		<div class="mt-7 flex flex-wrap items-center gap-2.5 text-sm">
 			<span class="rounded-full bg-white/10 px-3.5 py-1.5 font-medium backdrop-blur">
 				{data.shows.length} 檔戲劇
 			</span>
-			<span class="rounded-full bg-white/10 px-3.5 py-1.5 font-medium backdrop-blur">5 大平台</span>
 			{#if updatedLabel}
 				<span class="rounded-full bg-white/10 px-3.5 py-1.5 text-curtain-100/70 backdrop-blur">
 					更新於 {updatedLabel}
 				</span>
 			{/if}
 		</div>
-		<p class="mt-4 text-xs text-curtain-100/45">本站僅整合資訊，購票一律導回原售票網。</p>
 	</div>
 </header>
 
@@ -179,28 +184,31 @@
 		</div>
 
 		<div class="flex flex-wrap items-center gap-2">
-			<select bind:value={city} class={selectClass}>
+			<select bind:value={city} class={selectClass} aria-label="縣市">
 				<option value="">全部縣市</option>
 				{#each cities as c (c)}<option value={c}>{c}</option>{/each}
 			</select>
-			<select bind:value={category} class={selectClass}>
+			<select bind:value={category} class={selectClass} aria-label="分類">
 				<option value="">全部分類</option>
 				{#each categories as c (c)}<option value={c}>{c}</option>{/each}
 			</select>
-			<select bind:value={dateRange} class={selectClass}>
-				<option value="all">不限日期</option>
-				<option value="week">本週內</option>
-				<option value="month">一個月內</option>
-				<option value="quarter">三個月內</option>
-			</select>
-			<select bind:value={onSale} class={selectClass}>
-				<option value="all">開賣狀態</option>
-				<option value="soon">即將開賣（14天內）</option>
+
+			<label class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-1 text-sm text-gray-500">
+				<Icon name="calendar" size={14} class="text-gray-400" />
+				<input type="date" bind:value={fromDate} class={dateClass + ' border-0 py-1 pl-1 pr-1'} aria-label="起始日期" />
+				<span class="text-gray-300">–</span>
+				<input type="date" bind:value={toDate} class={dateClass + ' border-0 py-1 pl-1 pr-2'} aria-label="結束日期" />
+			</label>
+
+			<select bind:value={onSale} class={selectClass} aria-label="開賣狀態">
+				<option value="all">開賣狀態：全部</option>
 				<option value="available">已開賣</option>
+				<option value="upcoming">尚未開賣</option>
+				<option value="none">無開賣資訊</option>
 			</select>
-			<select bind:value={sort} class={selectClass}>
-				<option value="date">依演出日期</option>
-				<option value="onsale">依開賣時間</option>
+			<select bind:value={sort} class={selectClass} aria-label="排序">
+				<option value="date">排序：演出日期</option>
+				<option value="onsale">排序：開賣時間</option>
 			</select>
 		</div>
 
@@ -215,13 +223,14 @@
 					{SOURCE_LABELS[s]}
 				</button>
 			{/each}
-			<label class="flex items-center gap-2 text-gray-500">
-				<input type="checkbox" bind:checked={includeHeuristic} class="accent-curtain-600" />
-				含疑似戲劇
-			</label>
-			<button onclick={resetFilters} class="ml-auto text-gray-400 underline hover:text-curtain-600">
-				清除篩選
-			</button>
+			{#if hasFilters}
+				<button
+					onclick={resetFilters}
+					class="ml-auto flex items-center gap-1 text-gray-400 underline hover:text-curtain-600"
+				>
+					<Icon name="x" size={13} /> 清除篩選
+				</button>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -264,14 +273,7 @@
 			{/each}
 		</div>
 		{#if visible < filtered.length}
-			<div class="mt-8 flex justify-center">
-				<button
-					onclick={() => (visible += 60)}
-					class="rounded-full border border-curtain-200 bg-white px-6 py-2.5 text-sm font-medium text-curtain-700 transition hover:border-curtain-400 hover:shadow-md active:scale-[0.98]"
-				>
-					顯示更多（剩 {filtered.length - visible} 檔）
-				</button>
-			</div>
+			<div bind:this={sentinel} class="h-12"></div>
 		{/if}
 	{/if}
 </main>
@@ -281,7 +283,7 @@
 {/if}
 
 <footer class="mt-8 border-t border-curtain-100 bg-curtain-950 py-10 text-center text-xs text-curtain-100/50">
-	<p class="font-display text-base italic text-curtain-100/80">看戲 · OnStage TW</p>
+	<p class="font-display text-base italic text-curtain-100/80">幕間 · OnStage TW</p>
 	<p class="mx-auto mt-2 max-w-xl px-5">
 		開源戲劇演出聚合 · 資料來自各售票平台公開頁面，著作權屬各主辦單位與售票平台 · 本站不販售門票，購票連結皆導回官方售票網
 	</p>

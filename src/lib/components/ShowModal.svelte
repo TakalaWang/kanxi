@@ -51,9 +51,6 @@
 					{SOURCE_LABELS[show.source]}
 				</span>
 				{#if show.category}<span class="text-xs text-gray-500">{show.category}</span>{/if}
-				{#if show.heuristic}
-					<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">疑似戲劇（關鍵字推測）</span>
-				{/if}
 			</div>
 
 			<h2 class="font-display text-2xl font-semibold leading-snug text-gray-900">{show.title}</h2>

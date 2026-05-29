@@ -58,7 +58,7 @@ function renderFeed(shows: Show[], builtAt: string): string {
   <channel>
     <title>OnStage TW — Taiwan theatre listings</title>
     <link>${SITE_URL}</link>
-    <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and tixCraft.</description>
+    <description>Aggregated theatre performances from OPENTIX, udn, KHAM and ERA.</description>
     <language>zh-TW</language>
     <lastBuildDate>${new Date(builtAt).toUTCString()}</lastBuildDate>
 ${items}

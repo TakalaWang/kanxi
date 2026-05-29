@@ -1,12 +1,11 @@
 /** Ticketing source platform. */
-export type Source = 'opentix' | 'udn' | 'kham' | 'era' | 'tixcraft';
+export type Source = 'opentix' | 'udn' | 'kham' | 'era';
 
 export const SOURCE_LABELS: Record<Source, string> = {
 	opentix: 'OPENTIX 兩廳院',
 	udn: 'udn 售票網',
 	kham: '寬宏售票',
-	era: '年代售票',
-	tixcraft: '拓元售票'
+	era: '年代售票'
 };
 
 /** One performance occurrence (a date at a venue). */
@@ -46,8 +45,6 @@ export interface Show {
 	imageUrl: string | null;
 	/** Link back to the original ticketing page. */
 	url: string;
-	/** Whether classified as theatre by keyword heuristic (used when a source has no category, e.g. tixCraft). */
-	heuristic: boolean;
 	/** Program description (currently OPENTIX only). */
 	description: string | null;
 	/** Organizer. */

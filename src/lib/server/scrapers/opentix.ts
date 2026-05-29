@@ -1,5 +1,5 @@
 import type { Show, Session } from '../../types';
-import { politeFetch, sleep, unixToDate, unixToIso } from './util';
+import { politeFetch, sleep, unixToDate, unixToIso, classifyGenre, htmlToText } from './util';
 
 const LIST_API = 'https://csm.api.opentix.life/programs';
 const DETAIL_API = 'https://csm.api.opentix.life/programs';
@@ -65,7 +65,7 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 				onSaleAt = unixToIso(detail?.onlineStartTime);
 				venue = detail?.eventVenues?.[0]?.venue?.name ?? null;
 				city = detail?.eventVenues?.[0]?.venue?.city ?? city;
-				description = detail?.description?.trim() || null;
+				description = htmlToText(detail?.description);
 				organizer = detail?.programOrganizers?.map((o) => o.name).filter(Boolean).join('、') || null;
 				sessions = (detail?.eventVenues ?? []).flatMap((ev) =>
 					(ev.events ?? []).map((e) => ({
@@ -85,7 +85,7 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 			source: 'opentix',
 			sourceId: p.id,
 			title: p.name,
-			category: p.displayCategory,
+			category: classifyGenre(p.name, p.displayCategory),
 			startDate: unixToDate(p.startDateTime),
 			endDate: unixToDate(p.endDateTime),
 			venue,
@@ -95,7 +95,6 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 			maxPrice: p.maxPrice ?? null,
 			imageUrl: p.imageUrl ?? null,
 			url: EVENT_URL(p.id),
-			heuristic: false,
 			description,
 			organizer,
 			sessions

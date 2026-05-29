@@ -1,4 +1,5 @@
-/** Shared scraper helpers: polite fetch, date parsing, theatre keyword heuristic. */
+/** Shared scraper helpers: polite fetch, date parsing, HTML cleanup, genre classification. */
+import { convert } from 'html-to-text';
 
 const UA =
 	'onstage-tw-aggregator/0.1 (+https://github.com/TakalaWang/onstage-tw; theatre listing aggregator, links back, does not resell)';
@@ -52,6 +53,21 @@ export function extractDateRange(text: string): { start: string | null; end: str
 	return { start: dates[0], end: dates[dates.length - 1] };
 }
 
+/** Convert an HTML fragment to clean plain text (used for scraped descriptions). */
+export function htmlToText(html: string | null | undefined): string | null {
+	if (!html) return null;
+	const text = convert(html, {
+		wordwrap: false,
+		selectors: [
+			{ selector: 'a', options: { ignoreHref: true } },
+			{ selector: 'img', format: 'skip' }
+		]
+	})
+		.replace(/\n{3,}/g, '\n\n')
+		.trim();
+	return text || null;
+}
+
 /** Extract the on-sale time from text. Returns ISO at day granularity. */
 export function extractOnSale(text: string): string | null {
 	const idx = text.search(/開賣|售票時間|啟售|開始售票/);
@@ -61,55 +77,21 @@ export function extractOnSale(text: string): string | null {
 	return start ? `${start}T00:00:00+08:00` : null;
 }
 
+// Sub-genre buckets, checked top to bottom; first match wins.
+const GENRE_PATTERNS: [string, RegExp][] = [
+	['戲曲', /歌仔戲|歌仔|京劇|國劇|崑曲|崑劇|豫劇|粵劇|川劇|南管|北管|亂彈|客家大戲|客家戲|梨園|歌仔調|戲曲|傳統戲/],
+	['偶戲', /布袋戲|掌中|偶戲|戲偶|皮影|光影偶|懸絲偶/],
+	['音樂劇', /音樂劇|歌舞劇|musical/i],
+	['兒童親子', /兒童劇|親子|紙風車|如果兒童|童話|繪本|寶寶/],
+	['相聲', /相聲|脫口秀|漫才|單口/],
+	['舞台劇', /舞台劇|舞臺劇|話劇/]
+];
+
 /**
- * Theatre keyword allow-list for sources without a category field (tixCraft):
- * a show counts as theatre only if its title or venue matches one of these.
+ * Classify a show into a finer theatre sub-genre from its title.
+ * Returns the matched genre label, or `fallback` when nothing matches.
  */
-const DRAMA_KEYWORDS = [
-	'劇場',
-	'戲劇院',
-	'劇團',
-	'舞台劇',
-	'舞臺劇',
-	'話劇',
-	'歌劇院',
-	'音樂劇',
-	'兒童劇',
-	'偶戲',
-	'戲曲',
-	'歌仔戲',
-	'布袋戲',
-	'相聲',
-	'果陀',
-	'表演工作坊',
-	'故事工廠',
-	'全民大劇團',
-	'綠光劇團',
-	'明華園',
-	'唐美雲',
-	'紙風車',
-	'如果兒童',
-	'動見体',
-	'阮劇團'
-];
-
-/** Obvious concert / music-event terms; if matched, exclude first (avoids venue-name false positives like "○○劇場"). */
-const CONCERT_KEYWORDS = [
-	'演唱會',
-	'巡迴',
-	'World Tour',
-	'Tour',
-	'Live Tour',
-	'Concert',
-	'Fan Meeting',
-	'見面會',
-	'音樂節',
-	'Festival',
-	'演奏會'
-];
-
-export function looksLikeDrama(...texts: (string | null | undefined)[]): boolean {
-	const hay = texts.filter(Boolean).join(' ');
-	if (CONCERT_KEYWORDS.some((k) => hay.toLowerCase().includes(k.toLowerCase()))) return false;
-	return DRAMA_KEYWORDS.some((k) => hay.includes(k));
+export function classifyGenre(title: string, fallback: string | null = '戲劇'): string | null {
+	for (const [label, re] of GENRE_PATTERNS) if (re.test(title)) return label;
+	return fallback;
 }

@@ -56,9 +56,6 @@
 			<span class="rounded-full px-2 py-0.5 text-xs font-medium {SOURCE_COLOR[show.source]}">
 				{SOURCE_LABELS[show.source]}
 			</span>
-			{#if show.heuristic}
-				<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">疑似戲劇</span>
-			{/if}
 			{#if show.category}
 				<span class="text-xs text-gray-400">{show.category}</span>
 			{/if}
