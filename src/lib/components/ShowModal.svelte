@@ -2,10 +2,16 @@
 	import { SOURCE_LABELS, type Show } from '$lib/types';
 	import { fmtDateRange, fmtPrice, fmtOnSale, SOURCE_COLOR } from '$lib/format';
 	import { downloadShowIcs } from '$lib/ics';
+	import { fade, scale } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import Icon from './Icon.svelte';
 
 	let { show, onclose }: { show: Show; onclose: () => void } = $props();
 	let shared = $state(false);
+
+	// Respect reduced-motion: collapse durations to 0 so element still mounts/unmounts cleanly.
+	const reduce = $derived(prefersReducedMotion.current);
 
 	function onKey(e: KeyboardEvent) {
 		if (e.key === 'Escape') onclose();
@@ -30,17 +36,20 @@
 
 <!-- backdrop -->
 <div
-	class="animate-overlay-in fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-curtain-950/70 p-4 backdrop-blur-md sm:p-8"
+	class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-curtain-950/70 p-4 backdrop-blur-md sm:p-8"
 	role="presentation"
 	onclick={(e) => {
 		if (e.target === e.currentTarget) onclose();
 	}}
+	transition:fade={{ duration: reduce ? 0 : 200, easing: cubicOut }}
 >
 	<div
-		class="animate-pop-in my-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 dark:bg-[#1e1716] dark:ring-white/10"
+		class="my-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 dark:bg-[#1e1716] dark:ring-white/10"
 		role="dialog"
 		aria-modal="true"
 		aria-label={show.title}
+		in:scale={{ duration: reduce ? 0 : 250, start: 0.94, opacity: 0, easing: cubicOut }}
+		out:scale={{ duration: reduce ? 0 : 180, start: 0.96, opacity: 0, easing: cubicOut }}
 	>
 		<div class="relative">
 			{#if show.imageUrl}

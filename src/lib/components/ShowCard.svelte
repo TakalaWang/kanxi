@@ -16,8 +16,8 @@
 </script>
 
 <article
-	style="animation-delay: {delay}ms"
-	class="animate-fade-up group relative flex flex-col overflow-hidden rounded-2xl border border-curtain-100 bg-white shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-curtain-900/10 focus-within:ring-2 focus-within:ring-curtain-500 dark:border-white/10 dark:bg-[#1e1716]"
+	style="animation-delay: {delay}ms; content-visibility: auto; contain-intrinsic-size: 360px;"
+	class="animate-fade-up group relative flex flex-col overflow-hidden rounded-2xl border border-curtain-100 bg-white shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-2xl hover:shadow-curtain-900/15 focus-within:ring-2 focus-within:ring-curtain-500 dark:border-white/10 dark:bg-[#1e1716]"
 >
 	<!-- Full-card click target → details modal (sits under the jump link) -->
 	<button
@@ -39,6 +39,13 @@
 		{/if}
 		<div
 			class="absolute inset-0 bg-gradient-to-t from-curtain-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+		></div>
+
+		<!-- Spotlight sweep: a soft diagonal highlight glides across the poster on hover.
+		     transform/opacity only; skipped under prefers-reduced-motion. -->
+		<div
+			aria-hidden="true"
+			class="spotlight-sweep pointer-events-none absolute inset-0 z-[1] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 		></div>
 
 		<!-- Direct jump to the official ticketing page (above the overlay button) -->
@@ -119,3 +126,31 @@
 		</div>
 	</div>
 </article>
+
+<style>
+	/* A diagonal sheen that sweeps across the poster while hovered, evoking a stage
+	   spotlight passing over it. Uses transform only (translate) plus the opacity
+	   fade handled by the utility classes above. */
+	.spotlight-sweep {
+		background: linear-gradient(
+			105deg,
+			transparent 35%,
+			rgba(255, 255, 255, 0.22) 48%,
+			rgba(255, 255, 255, 0.35) 50%,
+			rgba(255, 255, 255, 0.22) 52%,
+			transparent 65%
+		);
+		transform: translate3d(-130%, 0, 0);
+	}
+
+	:global(.group:hover) .spotlight-sweep {
+		transform: translate3d(130%, 0, 0);
+		transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.spotlight-sweep {
+			display: none;
+		}
+	}
+</style>

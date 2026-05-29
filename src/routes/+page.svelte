@@ -7,6 +7,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { favorites } from '$lib/favorites.svelte';
 	import { GENRE_SLUG } from '$lib/genres';
+	import { REGION_ORDER, citiesInRegion } from '$lib/regions';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -16,6 +17,7 @@
 
 	let query = $state('');
 	let activeSources = $state<Set<Source>>(new Set());
+	let region = $state('');
 	let city = $state('');
 	let category = $state('');
 	let fromDate = $state('');
@@ -40,6 +42,15 @@
 		if (s.city) set.add(s.city);
 		for (const ss of s.sessions) if (ss.city) set.add(ss.city);
 		return [...set];
+	}
+
+	// Discrete occurrences (date + city). Sessions give one per performance;
+	// a single-run show is one occurrence spanning startDate→endDate. This lets us
+	// match "a performance on date X in region Y" rather than the whole tour window.
+	function occurrences(s: Show): { start: string | null; end: string | null; city: string | null }[] {
+		if (s.sessions.length)
+			return s.sessions.map((o) => ({ start: o.date, end: o.date, city: o.city ?? s.city }));
+		return [{ start: s.startDate, end: s.endDate, city: s.city }];
 	}
 
 	const cities = $derived([...new Set(data.shows.flatMap(showCities))].sort());
@@ -75,10 +86,23 @@
 			.filter((s) => {
 				if (onlyFavorites && !favorites.has(s.id)) return false;
 				if (activeSources.size && !activeSources.has(s.source)) return false;
-				if (city && !showCities(s).includes(city)) return false;
 				if (category && s.category !== category) return false;
-				if (fromDate && (s.endDate ?? s.startDate ?? '9999-12-31') < fromDate) return false;
-				if (toDate && (s.startDate ?? s.endDate ?? '0000-01-01') > toDate) return false;
+				// Joint location × date: a touring show matches only if a SINGLE
+				// performance satisfies both the area and the date range together.
+				const cityTargets = city ? [city] : region ? citiesInRegion(region) : null;
+				const dateActive = !!fromDate || !!toDate;
+				if (cityTargets || dateActive) {
+					const lo = fromDate || '0000-01-01';
+					const hi = toDate || '9999-12-31';
+					const ok = occurrences(s).some((o) => {
+						const cityOk = !cityTargets || (o.city != null && cityTargets.includes(o.city));
+						const dateOk =
+							!dateActive ||
+							((o.end ?? o.start ?? '9999-12-31') >= lo && (o.start ?? o.end ?? '0000-01-01') <= hi);
+						return cityOk && dateOk;
+					});
+					if (!ok) return false;
+				}
 				if (onSale === 'available' && s.onSaleAt && s.onSaleAt > nowIso) return false;
 				if (onSale === 'upcoming' && !(s.onSaleAt && s.onSaleAt > nowIso)) return false;
 				if (priceMin || priceMax) {
@@ -99,6 +123,7 @@
 	const hasFilters = $derived(
 		!!query ||
 			activeSources.size > 0 ||
+			!!region ||
 			!!city ||
 			!!category ||
 			!!fromDate ||
@@ -111,6 +136,7 @@
 	function resetFilters() {
 		query = '';
 		activeSources = new Set();
+		region = '';
 		city = '';
 		category = '';
 		fromDate = '';
@@ -224,13 +250,20 @@
 			<div class="curtain-half curtain-left h-full w-1/2"></div>
 			<div class="curtain-half curtain-right h-full w-1/2"></div>
 		</div>
-		<!-- hoisted brand: a rope from the top down to the icon, lifted off-screen -->
+		<!-- hoisted brand: a hanging wooden sign on two ropes, lifted off-screen -->
 		<div class="curtain-hoist absolute inset-x-0 top-0 flex flex-col items-center text-white">
-			<div class="curtain-rope h-[34vh] w-0.5"></div>
-			<img src={favicon} alt="" class="h-16 w-16 rounded-2xl shadow-2xl ring-2 ring-gold-400/40" />
-			<div class="mt-4 text-5xl font-bold tracking-tight sm:text-6xl">幕間</div>
-			<div class="mt-1 font-display text-xl italic text-gold-400">OnStage TW</div>
-			<div class="mt-3 text-sm tracking-[0.3em] text-white/60">台灣戲劇演出，一站看完</div>
+			<div class="flex w-64 justify-between px-7 sm:w-72">
+				<div class="curtain-rope h-[26vh]"></div>
+				<div class="curtain-rope h-[26vh]"></div>
+			</div>
+			<div class="curtain-sign relative flex w-64 flex-col items-center rounded-2xl px-6 py-7 sm:w-72">
+				<span class="curtain-eyelet absolute -top-1.5 left-6"></span>
+				<span class="curtain-eyelet absolute -top-1.5 right-6"></span>
+				<img src={favicon} alt="" class="h-14 w-14 rounded-2xl shadow-lg" />
+				<div class="mt-3 text-4xl font-bold tracking-tight">幕間</div>
+				<div class="mt-1 font-display text-lg italic text-gold-400">OnStage TW</div>
+				<div class="mt-3 text-xs tracking-[0.25em] text-white/55">台灣戲劇演出，一站看完</div>
+			</div>
 		</div>
 	</div>
 {/if}
@@ -325,6 +358,10 @@
 		</div>
 
 		<div class="{showFilters ? 'flex' : 'hidden'} flex-wrap items-center gap-2 sm:flex">
+			<select bind:value={region} class={selectClass} aria-label="地區">
+				<option value="">全部地區</option>
+				{#each REGION_ORDER as r (r)}<option value={r}>{r}</option>{/each}
+			</select>
 			<select bind:value={city} class={selectClass} aria-label="縣市">
 				<option value="">全部縣市</option>
 				{#each cities as c (c)}<option value={c}>{c}</option>{/each}

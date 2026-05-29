@@ -160,10 +160,30 @@ const TW_CITIES = [
 	'澎湖縣', '金門縣', '連江縣'
 ];
 
+// Well-known venues whose names don't contain a city token → map to a city.
+const VENUE_CITY: [RegExp, string][] = [
+	[/國家戲劇院|國家音樂廳|兩廳院|實驗劇場|演奏廳|臺灣戲曲中心|臺北表演藝術中心|北藝中心|水源劇場|城市舞台|臺北流行音樂中心|台北流行音樂中心|國父紀念館|中山堂|西門紅樓|紅樓劇場|牯嶺街|松山文創|松菸|大稻埕|Legacy Taipei|Zepp New Taipei|Clapper|Comedy|卡米地|Legacy TERA/i, '臺北市'],
+	[/新莊文化藝術中心|新北市藝文中心|蘆洲|淡水/i, '新北市'],
+	[/衛武營|高雄流行音樂中心|駁二|大東文化藝術中心|高雄市文化中心|高雄文化中心|高雄市音樂館|高雄科工館/i, '高雄市'],
+	[/臺中國家歌劇院|台中國家歌劇院|葫蘆墩|臺中市葫蘆墩|中山堂.*臺中|纳豆|納豆/i, '臺中市'],
+	[/臺南文化中心|台南文化中心|南瀛|涴莎|臺南藝術|臺南市立|文賢|321巷/i, '臺南市'],
+	[/嘉義縣表演藝術中心|嘉義市政府文化局|嘉義市文化局|嘉北/i, '嘉義市'],
+	[/新竹市文化局|新竹縣文化局|鐵玫瑰|新竹市政府文化局/i, '新竹市'],
+	[/桃園展演中心|桃園藝文特區|中壢藝術館|桃園市政府文化局|陽光劇場/i, '桃園市'],
+	[/宜蘭演藝廳|宜蘭縣政府文化局/i, '宜蘭縣'],
+	[/員林演藝廳|彰化縣立|彰化縣員林/i, '彰化縣'],
+	[/雲林表演廳|雲林縣政府文化處/i, '雲林縣'],
+	[/屏東藝術館|屏東縣政府文化處/i, '屏東縣'],
+	[/花蓮縣文化局|花蓮文化創意/i, '花蓮縣'],
+	[/臺東縣政府文化處|台東縣政府文化處/i, '臺東縣'],
+	[/基隆市文化局|基隆文化中心/i, '基隆市']
+];
+
 /** Pull a normalised Taiwan city (臺/台 unified) from an address or venue string. */
 export function cityFromText(text: string | null | undefined): string | null {
 	if (!text) return null;
 	for (const c of TW_CITIES) if (text.includes(c)) return c.replace('台', '臺');
+	for (const [re, city] of VENUE_CITY) if (re.test(text)) return city;
 	return null;
 }
 
