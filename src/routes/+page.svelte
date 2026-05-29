@@ -84,6 +84,20 @@
 	const sourceOptions = $derived(
 		presentSources.map((s) => ({ value: s, label: SOURCE_LABELS[s] })),
 	);
+	const allCityValues = $derived(regionGroups.flatMap((g) => g.children.map((c) => c.value)));
+
+	let defaultsApplied = false;
+	$effect(() => {
+		if (defaultsApplied) return;
+		if (allCityValues.length || categories.length || presentSources.length) {
+			selectedCities = allCityValues;
+			selectedCategories = [...categories];
+			activeSources = [...presentSources];
+			defaultsApplied = true;
+		}
+	});
+
+	const isSubset = (sel: string[], total: number) => sel.length > 0 && sel.length < total;
 
 	function sortShows(a: Show, b: Show): number {
 		switch (sort) {
@@ -105,10 +119,14 @@
 		return data.shows
 			.filter((s) => {
 				if (onlyFavorites && !favorites.has(s.id)) return false;
-				if (activeSources.length && !activeSources.includes(s.source)) return false;
-				if (selectedCategories.length && (!s.category || !selectedCategories.includes(s.category)))
+				if (isSubset(activeSources, presentSources.length) && !activeSources.includes(s.source))
 					return false;
-				const cityTargets = selectedCities.length ? selectedCities : null;
+				if (
+					isSubset(selectedCategories, categories.length) &&
+					(!s.category || !selectedCategories.includes(s.category))
+				)
+					return false;
+				const cityTargets = isSubset(selectedCities, allCityValues.length) ? selectedCities : null;
 				const dateActive = !!fromDate || !!toDate;
 				if (cityTargets || dateActive) {
 					const lo = fromDate || '0000-01-01';
@@ -141,9 +159,9 @@
 
 	const hasFilters = $derived(
 		!!query ||
-			activeSources.length > 0 ||
-			selectedCities.length > 0 ||
-			selectedCategories.length > 0 ||
+			isSubset(activeSources, presentSources.length) ||
+			isSubset(selectedCities, allCityValues.length) ||
+			isSubset(selectedCategories, categories.length) ||
 			!!fromDate ||
 			!!toDate ||
 			!!priceMin ||
@@ -152,9 +170,9 @@
 	);
 
 	const activeFilterCount = $derived(
-		(activeSources.length ? 1 : 0) +
-			(selectedCities.length ? 1 : 0) +
-			(selectedCategories.length ? 1 : 0) +
+		(isSubset(activeSources, presentSources.length) ? 1 : 0) +
+			(isSubset(selectedCities, allCityValues.length) ? 1 : 0) +
+			(isSubset(selectedCategories, categories.length) ? 1 : 0) +
 			(fromDate || toDate ? 1 : 0) +
 			(priceMin || priceMax ? 1 : 0) +
 			(youthOnly ? 1 : 0),
@@ -162,9 +180,9 @@
 
 	function resetFilters() {
 		query = '';
-		activeSources = [];
-		selectedCities = [];
-		selectedCategories = [];
+		activeSources = [...presentSources];
+		selectedCities = allCityValues;
+		selectedCategories = [...categories];
 		fromDate = '';
 		toDate = '';
 		priceMin = '';

@@ -14,6 +14,9 @@
 	let open = $state(false);
 	let root = $state<HTMLElement | null>(null);
 
+	const total = $derived(options.length + groups.reduce((n, g) => n + g.children.length, 0));
+	const active = $derived(selected.length > 0 && selected.length < total);
+
 	$effect(() => {
 		if (!open) return;
 		const onDoc = (e: MouseEvent) => {
@@ -48,11 +51,11 @@
 		type="button"
 		onclick={() => (open = !open)}
 		aria-expanded={open}
-		class="flex items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-sm transition dark:bg-white/5 {selected.length
+		class="flex items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-sm transition dark:bg-white/5 {active
 			? 'border-curtain-500 text-curtain-600'
 			: 'border-gray-300 text-gray-700 hover:border-curtain-400 dark:border-white/15 dark:text-gray-200'}"
 	>
-		{label}{selected.length ? `（${selected.length}）` : ''}
+		{label}
 		<Icon name="chevron-down" size={14} class="transition-transform {open ? 'rotate-180' : ''}" />
 	</button>
 	{#if open}
