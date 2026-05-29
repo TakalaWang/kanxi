@@ -69,9 +69,7 @@
 				shared = true;
 				setTimeout(() => (shared = false), 1800);
 			}
-		} catch {
-			/* cancelled / unsupported */
-		}
+		} catch {}
 	}
 </script>
 

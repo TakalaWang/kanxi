@@ -15,8 +15,6 @@
 	const soon = $derived(onSaleDays !== null && onSaleDays >= 0 && onSaleDays <= 7);
 	const delay = $derived(Math.min(index, 12) * 45);
 
-	// Real link to the show's own page (crawlable / shareable); a plain click opens
-	// the quick-view modal instead, while ⌘/Ctrl/middle-click follows the link.
 	function openModal(e: MouseEvent) {
 		if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
 		e.preventDefault();

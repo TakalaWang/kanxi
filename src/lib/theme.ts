@@ -10,7 +10,5 @@ export function applyDark(dark: boolean): void {
 	document.documentElement.classList.toggle('dark', dark);
 	try {
 		localStorage.setItem('theme', dark ? 'dark' : 'light');
-	} catch {
-		/* ignore */
-	}
+	} catch {}
 }

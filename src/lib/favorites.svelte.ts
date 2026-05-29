@@ -16,9 +16,7 @@ const ids = new SvelteSet<string>(load());
 function persist() {
 	try {
 		localStorage.setItem(KEY, JSON.stringify([...ids]));
-	} catch {
-		/* ignore */
-	}
+	} catch {}
 }
 
 export const favorites = {

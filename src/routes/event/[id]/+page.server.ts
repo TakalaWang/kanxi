@@ -32,9 +32,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		try {
 			const map = JSON.parse(readFileSync(DESC_PATH, 'utf-8')) as Record<string, string>;
 			description = map[show.id] ?? null;
-		} catch {
-			/* descriptions optional */
-		}
+		} catch {}
 	}
 
 	return { show: { ...show, description }, siteUrl: SITE_URL };

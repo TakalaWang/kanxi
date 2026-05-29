@@ -24,7 +24,6 @@
 	let category = $state('');
 	let fromDate = $state('');
 	let toDate = $state('');
-	let onSale = $state<'all' | 'available' | 'upcoming'>('all');
 	let priceMin = $state('');
 	let priceMax = $state('');
 	let sort = $state<'date-desc' | 'date-asc' | 'onsale' | 'price-asc' | 'price-desc'>('date-asc');
@@ -100,7 +99,6 @@
 
 	const filtered = $derived.by(() => {
 		const q = query.trim().toLowerCase();
-		const nowIso = new Date().toISOString();
 		return data.shows
 			.filter((s) => {
 				if (onlyFavorites && !favorites.has(s.id)) return false;
@@ -121,8 +119,6 @@
 					});
 					if (!ok) return false;
 				}
-				if (onSale === 'available' && s.onSaleAt && s.onSaleAt > nowIso) return false;
-				if (onSale === 'upcoming' && !(s.onSaleAt && s.onSaleAt > nowIso)) return false;
 				if (priceMin || priceMax) {
 					if (s.minPrice == null) return false;
 					if (priceMin && s.minPrice < Number(priceMin)) return false;
@@ -146,9 +142,17 @@
 			!!category ||
 			!!fromDate ||
 			!!toDate ||
-			onSale !== 'all' ||
 			!!priceMin ||
 			!!priceMax,
+	);
+
+	const activeFilterCount = $derived(
+		(activeSources.length ? 1 : 0) +
+			(region ? 1 : 0) +
+			(city ? 1 : 0) +
+			(category ? 1 : 0) +
+			(fromDate || toDate ? 1 : 0) +
+			(priceMin || priceMax ? 1 : 0),
 	);
 
 	function resetFilters() {
@@ -159,7 +163,6 @@
 		category = '';
 		fromDate = '';
 		toDate = '';
-		onSale = 'all';
 		priceMin = '';
 		priceMax = '';
 	}
@@ -185,9 +188,7 @@
 		let alreadyShown = false;
 		try {
 			alreadyShown = !!sessionStorage.getItem('introShown');
-		} catch {
-			/* ignore */
-		}
+		} catch {}
 		if (matchMedia('(prefers-reduced-motion: reduce)').matches || alreadyShown) {
 			curtain = false;
 		} else {
@@ -356,35 +357,41 @@
 			</button>
 		</div>
 	</header>
-	<div class="mx-auto max-w-6xl px-4 pb-3 sm:px-5">
-		<div class="flex items-center gap-2">
-			<div class="relative flex-1">
-				<span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-					<Icon name="search" size={16} />
-				</span>
-				<input
-					type="search"
-					bind:value={query}
-					placeholder="搜尋劇名、場館、主辦、分類…"
-					class="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-curtain-500 focus:ring-2 focus:ring-curtain-500/20 dark:border-white/15 dark:bg-white/5 dark:text-gray-100"
-				/>
-			</div>
-			<button
-				onclick={() => (showFilters = !showFilters)}
-				aria-expanded={showFilters}
-				class="flex shrink-0 items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-sm transition dark:bg-white/5 {hasFilters ||
-				showFilters
-					? 'border-curtain-500 text-curtain-600'
-					: 'border-gray-300 text-gray-600 dark:border-white/15 dark:text-gray-300'}"
-			>
-				<Icon name="sliders" size={15} /> 篩選
-			</button>
+	<div class="mx-auto max-w-6xl px-4 pb-2 sm:px-5">
+		<div class="relative">
+			<span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+				<Icon name="search" size={16} />
+			</span>
+			<input
+				type="search"
+				bind:value={query}
+				placeholder="搜尋劇名、場館、主辦、分類…"
+				class="w-full rounded-full border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-curtain-500 focus:ring-2 focus:ring-curtain-500/20 dark:border-white/15 dark:bg-white/5 dark:text-gray-100"
+			/>
 		</div>
+		<button
+			onclick={() => (showFilters = !showFilters)}
+			aria-expanded={showFilters}
+			aria-controls="advanced-filters"
+			class="mx-auto mt-1 flex items-center gap-1 px-3 py-1 text-xs font-medium transition {activeFilterCount
+				? 'text-curtain-600 dark:text-curtain-400'
+				: 'text-gray-400 hover:text-curtain-600 dark:hover:text-curtain-400'}"
+		>
+			{showFilters ? '收合篩選' : '進階篩選'}{!showFilters && activeFilterCount
+				? `（已套用 ${activeFilterCount}）`
+				: ''}
+			<Icon
+				name="chevron-down"
+				size={14}
+				class="transition-transform duration-200 {showFilters ? 'rotate-180' : ''}"
+			/>
+		</button>
 	</div>
 </div>
 
 {#if showFilters}
 	<div
+		id="advanced-filters"
 		class="border-b border-curtain-100 bg-curtain-50/70 dark:border-white/10 dark:bg-[#16100f]/70"
 	>
 		<div class="mx-auto max-w-6xl space-y-3 px-5 py-3">
@@ -435,11 +442,6 @@
 					/>
 				</span>
 
-				<select bind:value={onSale} class={selectClass} aria-label="開賣狀態">
-					<option value="all">開賣狀態：全部</option>
-					<option value="available">已開賣</option>
-					<option value="upcoming">尚未開賣</option>
-				</select>
 				<select bind:value={sort} class={selectClass} aria-label="排序">
 					<option value="date-asc">排序：演出日期早→晚</option>
 					<option value="date-desc">演出日期晚→早</option>

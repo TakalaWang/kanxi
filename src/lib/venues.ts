@@ -1070,7 +1070,7 @@ export const VENUES: Venue[] = [
 		city: '桃園市',
 		lat: 24.9484,
 		lng: 121.2066,
-	}, // approx
+	},
 	{ name: '僑愛國小', aliases: ['僑愛國小'], city: '桃園市', lat: 24.9132, lng: 121.2764 },
 	{
 		name: '來福好事 LAUGH HOUSE',
@@ -1100,7 +1100,7 @@ export const VENUES: Venue[] = [
 		city: '連江縣',
 		lat: 26.1524,
 		lng: 119.948,
-	}, // approx
+	},
 	{
 		name: '現場馬拉桑餐酒館',
 		aliases: ['現場馬拉桑'],

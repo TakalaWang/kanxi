@@ -84,9 +84,6 @@
 			>
 				送出回饋
 			</button>
-			<p class="text-center text-xs text-gray-400">
-				會開啟 GitHub 的 issue 頁面（內容已帶好），確認後送出即可，需 GitHub 帳號。
-			</p>
 		</form>
 	</div>
 </div>
