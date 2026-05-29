@@ -86,17 +86,6 @@
 	);
 	const allCityValues = $derived(regionGroups.flatMap((g) => g.children.map((c) => c.value)));
 
-	let defaultsApplied = false;
-	$effect(() => {
-		if (defaultsApplied) return;
-		if (allCityValues.length || categories.length || presentSources.length) {
-			selectedCities = allCityValues;
-			selectedCategories = [...categories];
-			activeSources = [...presentSources];
-			defaultsApplied = true;
-		}
-	});
-
 	const isSubset = (sel: string[], total: number) => sel.length > 0 && sel.length < total;
 
 	function sortShows(a: Show, b: Show): number {
@@ -180,9 +169,9 @@
 
 	function resetFilters() {
 		query = '';
-		activeSources = [...presentSources];
-		selectedCities = allCityValues;
-		selectedCategories = [...categories];
+		activeSources = [];
+		selectedCities = [];
+		selectedCategories = [];
 		fromDate = '';
 		toDate = '';
 		priceMin = '';
@@ -314,7 +303,7 @@
 		<div class="flex min-w-0 items-center gap-2.5">
 			<img src={favicon} alt="" class="h-9 w-9 shrink-0 rounded-lg shadow-sm" />
 			<div class="flex items-baseline gap-2">
-				<h1 class="text-2xl font-bold tracking-tight">幕間</h1>
+				<h1 class="whitespace-nowrap text-2xl font-bold tracking-tight">幕間</h1>
 				<span class="hidden font-display text-lg italic text-gray-400 sm:inline dark:text-gray-500">
 					OnStage TW
 				</span>
@@ -325,7 +314,7 @@
 				台灣戲劇演出整合平台
 			</span>
 		</div>
-		<div class="flex shrink-0 items-center gap-2">
+		<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
 			<a
 				href="/about"
 				class="rounded-full px-2 py-2 text-sm text-gray-500 transition hover:text-curtain-600 dark:text-gray-400 dark:hover:text-curtain-400"
@@ -358,12 +347,14 @@
 			<button
 				onclick={() => (onlyFavorites = !onlyFavorites)}
 				aria-pressed={onlyFavorites}
-				class="flex items-center gap-1.5 rounded-full border px-3 py-2 text-sm font-medium transition active:scale-[0.98] {onlyFavorites
+				aria-label="只看收藏"
+				class="flex items-center gap-1.5 rounded-full border px-2.5 py-2 text-sm font-medium transition active:scale-[0.98] sm:px-3 {onlyFavorites
 					? 'border-curtain-600 bg-curtain-600 text-white'
 					: 'border-gray-200 bg-white text-gray-600 hover:border-curtain-400 dark:border-white/15 dark:bg-white/5 dark:text-gray-300'}"
 			>
 				<Icon name="heart" size={15} filled={onlyFavorites} />
-				<span>收藏{favorites.count ? ` ${favorites.count}` : ''}</span>
+				<span class="hidden sm:inline">收藏</span>
+				{#if favorites.count}<span class="text-xs sm:text-sm">{favorites.count}</span>{/if}
 			</button>
 			<button
 				onclick={() => (showSubscribe = !showSubscribe)}
