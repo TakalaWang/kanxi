@@ -35,14 +35,25 @@
 					class="max-h-80 w-full bg-curtain-950 object-contain"
 				/>
 			{/if}
-			<button
-				type="button"
-				onclick={onclose}
-				aria-label="關閉"
-				class="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-curtain-950/55 text-white backdrop-blur transition hover:bg-curtain-950/80 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
-			>
-				<Icon name="x" size={18} />
-			</button>
+			<div class="absolute right-3 top-3 flex items-center gap-2">
+				<a
+					href={show.url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex items-center gap-1.5 rounded-full bg-curtain-600 px-3.5 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-curtain-700 active:scale-95"
+				>
+					前往 {SOURCE_LABELS[show.source]} 購票
+					<Icon name="arrow-up-right" size={15} />
+				</a>
+				<button
+					type="button"
+					onclick={onclose}
+					aria-label="關閉"
+					class="flex h-9 w-9 items-center justify-center rounded-full bg-curtain-950/55 text-white backdrop-blur transition hover:bg-curtain-950/80 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+				>
+					<Icon name="x" size={18} />
+				</button>
+			</div>
 		</div>
 
 		<div class="space-y-5 p-6">
@@ -106,16 +117,7 @@
 				</div>
 			{/if}
 
-			<a
-				href={show.url}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="flex w-full items-center justify-center gap-2 rounded-xl bg-curtain-600 py-3.5 text-center font-medium text-white transition hover:bg-curtain-700 active:scale-[0.99]"
-			>
-				前往 {SOURCE_LABELS[show.source]} 購票
-				<Icon name="arrow-up-right" size={16} />
-			</a>
-			<p class="text-center text-xs text-gray-400">本站不販售門票，點擊將前往官方售票頁</p>
+			<p class="text-xs text-gray-400">本站不販售門票，「前往購票」將開啟官方售票頁。</p>
 		</div>
 	</div>
 </div>

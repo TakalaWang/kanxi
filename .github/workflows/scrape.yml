@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: scrape
@@ -38,3 +39,17 @@ jobs:
             git commit -m "chore: refresh show data [skip ci]"
             git push
           fi
+      # If a source errored or returned 0 rows (likely a site redesign), open an
+      # alert issue — but only if there isn't already an open one (no spam).
+      - name: Alert on scraper failure
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -f scrape-report.json || exit 0
+          FAILS=$(node -e "process.stdout.write(String(require('./scrape-report.json').failures.length))")
+          if [ "$FAILS" = "0" ]; then echo "All sources ok."; exit 0; fi
+          EXISTING=$(gh issue list --label scraper-failure --state open --json number --jq 'length')
+          if [ "$EXISTING" != "0" ]; then echo "An open alert issue already exists."; exit 0; fi
+          node -e "const r=require('./scrape-report.json');const fs=require('fs');const lines=r.failures.map(f=>'- **'+f.source+'**：'+f.error).join('\n');fs.writeFileSync('issue-body.md','排程偵測到抓取異常，可能是來源網站改版或暫時無法存取：\n\n'+lines+'\n\n請檢查對應的 scraper（src/lib/server/scrapers/）。修正後關閉此 issue。\n\n_由排程自動建立。_')"
+          gh issue create --title "⚠️ 抓取異常：$(date -u +%Y-%m-%d)" --label scraper-failure --body-file issue-body.md

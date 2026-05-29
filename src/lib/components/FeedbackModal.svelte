@@ -84,7 +84,7 @@
 			type="submit"
 			class="flex w-full items-center justify-center gap-2 rounded-xl bg-curtain-600 py-3 font-medium text-white transition hover:bg-curtain-700 active:scale-[0.99]"
 		>
-			<Icon name="github" size={16} /> 在 GitHub 送出回饋
+			送出回饋
 		</button>
 		<p class="text-center text-xs text-gray-400">
 			會開啟 GitHub 的 issue 頁面（內容已帶好），確認後送出即可，需 GitHub 帳號。

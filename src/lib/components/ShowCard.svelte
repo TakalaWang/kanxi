@@ -11,16 +11,21 @@
 
 	const onSaleDays = $derived(daysUntilOnSale(show.onSaleAt));
 	const soon = $derived(onSaleDays !== null && onSaleDays >= 0 && onSaleDays <= 7);
-	// Cap the stagger so later cards don't wait too long.
 	const delay = $derived(Math.min(index, 12) * 45);
 </script>
 
-<button
-	type="button"
-	onclick={() => onopen(show)}
+<article
 	style="animation-delay: {delay}ms"
-	class="animate-fade-up group flex flex-col overflow-hidden rounded-2xl border border-curtain-100 bg-white text-left shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-curtain-900/10 active:translate-y-0 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-curtain-500 focus-visible:outline-none dark:border-white/10 dark:bg-[#1e1716]"
+	class="animate-fade-up group relative flex flex-col overflow-hidden rounded-2xl border border-curtain-100 bg-white shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-curtain-900/10 focus-within:ring-2 focus-within:ring-curtain-500 dark:border-white/10 dark:bg-[#1e1716]"
 >
+	<!-- Full-card click target → details modal (sits under the jump link) -->
+	<button
+		type="button"
+		onclick={() => onopen(show)}
+		aria-label={`查看「${show.title}」詳情`}
+		class="absolute inset-0 z-[1] cursor-pointer outline-none"
+	></button>
+
 	<div class="relative aspect-[3/2] overflow-hidden bg-curtain-950">
 		{#if show.imageUrl}
 			<img
@@ -31,19 +36,24 @@
 				class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
 			/>
 		{/if}
-		<!-- bottom gradient + reveal-on-hover view hint -->
 		<div
-			class="absolute inset-0 bg-gradient-to-t from-curtain-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			class="absolute inset-0 bg-gradient-to-t from-curtain-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 		></div>
-		<span
-			class="absolute bottom-3 left-3 flex translate-y-1 items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-curtain-700 opacity-0 shadow transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+
+		<!-- Direct jump to the official ticketing page (above the overlay button) -->
+		<a
+			href={show.url}
+			target="_blank"
+			rel="noopener noreferrer"
+			aria-label={`前往 ${SOURCE_LABELS[show.source]} 購票`}
+			class="absolute bottom-2 right-2 z-[2] flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-curtain-700 shadow backdrop-blur transition hover:bg-white active:scale-95 dark:bg-black/55 dark:text-gray-50"
 		>
-			查看詳情 <Icon name="arrow-up-right" size={13} />
-		</span>
+			購票 <Icon name="arrow-up-right" size={12} />
+		</a>
 
 		{#if soon}
 			<span
-				class="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-gold-400 px-2.5 py-1 text-xs font-semibold text-curtain-950 shadow"
+				class="absolute left-3 top-3 z-[2] flex items-center gap-1 rounded-full bg-gold-400 px-2.5 py-1 text-xs font-semibold text-curtain-950 shadow"
 			>
 				<Icon name="clock" size={12} />
 				{onSaleDays === 0 ? '今天開賣' : `${onSaleDays} 天後開賣`}
@@ -51,7 +61,7 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-1 flex-col gap-2 p-4">
+	<div class="relative z-0 flex flex-1 flex-col gap-2 p-4">
 		<div class="flex flex-wrap items-center gap-2">
 			<span class="rounded-full px-2 py-0.5 text-xs font-medium {SOURCE_COLOR[show.source]}">
 				{SOURCE_LABELS[show.source]}
@@ -92,4 +102,4 @@
 			{/if}
 		</div>
 	</div>
-</button>
+</article>

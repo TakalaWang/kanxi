@@ -3,7 +3,7 @@ import type { Show } from '../types';
 import { SOURCE_LABELS } from '../types';
 
 const OUT_DIR = process.env.ONSTAGE_OUT_DIR ?? 'static';
-const SITE_URL = (process.env.ONSTAGE_SITE_URL ?? 'https://onstage-tw.vercel.app').replace(/\/$/, '');
+const SITE_URL = (process.env.ONSTAGE_SITE_URL ?? 'https://onstage.takalawang.dev').replace(/\/$/, '');
 const MAX_FEED_ITEMS = 100;
 
 /** Keep only shows that have not finished yet, sorted by performance date. */

@@ -27,3 +27,7 @@ vite.config.ts.timestamp-*
 
 # Editor
 .vscode
+
+# Scrape artifacts
+scrape-report.json
+issue-body.md

@@ -32,6 +32,9 @@ html {
 	color-scheme: light;
 	-webkit-font-smoothing: antialiased;
 	scroll-behavior: smooth;
+	transition:
+		background-color 0.35s ease,
+		color 0.35s ease;
 }
 
 html.dark {
@@ -97,6 +100,28 @@ html.dark {
 }
 .animate-spotlight {
 	animation: spotlight-drift 18s ease-in-out infinite;
+}
+
+/* One-time stage-curtain reveal */
+@keyframes curtain-open-left {
+	to {
+		transform: translateX(-100%);
+	}
+}
+@keyframes curtain-open-right {
+	to {
+		transform: translateX(100%);
+	}
+}
+.curtain-half {
+	background: repeating-linear-gradient(90deg, #5a0f17 0 26px, #7c1620 26px 52px);
+	box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.55);
+}
+.curtain-left {
+	animation: curtain-open-left 1.05s cubic-bezier(0.76, 0, 0.24, 1) 0.1s forwards;
+}
+.curtain-right {
+	animation: curtain-open-right 1.05s cubic-bezier(0.76, 0, 0.24, 1) 0.1s forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
