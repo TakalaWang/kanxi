@@ -5,7 +5,7 @@
     <link>https://onstage.takalawang.dev</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and KKTIX.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 29 May 2026 15:42:26 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 16:34:41 GMT</lastBuildDate>
     <item>
       <title>王偉忠監製舞台劇《明星養老院》</title>
       <link>https://tickets.udnfunlife.com/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P0YXZMT5</link>
@@ -119,14 +119,6 @@
       <description>Date: 2026-08-02 · Venue: 高雄市文化中心至善廳, 高雄市 · Source: 年代售票</description>
     </item>
     <item>
-      <title>2026夏日放／FUN時光—歌劇院駐館藝術家黃建豪《大話家》讀劇音樂會</title>
-      <link>https://www.accupass.com/event/2604190919141237619391</link>
-      <guid isPermaLink="false">accupass:2604190919141237619391</guid>
-      <pubDate>Fri, 31 Jul 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-08-01 · Venue: 臺中國家歌劇院 角落沙龍, 臺中市 · Source: Accupass 活動通</description>
-    </item>
-    <item>
       <title>《把書吃掉｜太空西遊篇》演出票券－2026華山親子表藝節</title>
       <link>https://www.accupass.com/event/2605090904161172192756</link>
       <guid isPermaLink="false">accupass:2605090904161172192756</guid>
@@ -140,7 +132,7 @@
       <guid isPermaLink="false">accupass:2604161601098300220570</guid>
       <pubDate>Fri, 31 Jul 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-08-01 · Source: Accupass 活動通</description>
+      <description>Date: 2026-08-01 · Venue: 龜山區公所中山天幕廣場, 桃園市 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>打架俱樂部｜即興裡的反派練習（7-8月場）</title>
@@ -292,7 +284,7 @@
       <guid isPermaLink="false">accupass:2604161835281289372763</guid>
       <pubDate>Sun, 05 Jul 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-07-06 · Source: Accupass 活動通</description>
+      <description>Date: 2026-07-06 · Venue: 3F-親子小學堂, 桃園市 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>《春雨の喜劇力開發研究部》7、8月號</title>
@@ -805,6 +797,14 @@
       <pubDate>Thu, 28 May 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-09-11 – 2026-09-27 · Venue: 水源劇場, 臺北市 · On sale: 2026-05-28 · Source: OPENTIX 兩廳院</description>
+    </item>
+    <item>
+      <title>【8/16 台南晚場】2026 迷走大學實體課程《這邊可以講 台南場》</title>
+      <link>https://comedyclub.kktix.cc/events/meisouniv20260816-2</link>
+      <guid isPermaLink="false">kktix:comedyclub/meisouniv20260816-2</guid>
+      <pubDate>Wed, 27 May 2026 16:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-08-16 · Venue: 漂丿白鷺Live House , 臺南市 · On sale: 2026-05-27 · Source: KKTIX</description>
     </item>
   </channel>
 </rss>

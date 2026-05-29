@@ -1,5 +1,13 @@
 import type { Show, Session } from '../../types';
-import { politeFetch, sleep, unixToDate, unixToIso, classifyGenre, htmlToText } from './util';
+import {
+	politeFetch,
+	sleep,
+	unixToDate,
+	unixToIso,
+	classifyGenre,
+	htmlToText,
+	hasYouthSeat,
+} from './util';
 
 const LIST_API = 'https://csm.api.opentix.life/programs';
 const DETAIL_API = 'https://csm.api.opentix.life/programs';
@@ -22,6 +30,9 @@ interface ProgramListItem {
 interface ProgramDetail {
 	onlineStartTime?: number;
 	description?: string;
+	saleInfoContent?: string;
+	saleInfoNotice?: string;
+	noticeContent?: string;
 	programOrganizers?: { name?: string }[];
 	eventVenues?: {
 		venue?: { name?: string; city?: string };
@@ -54,6 +65,7 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 		let city = p.cities?.[0] ?? null;
 		let description: string | null = null;
 		let organizer: string | null = null;
+		let youthSeat = false;
 		let sessions: Session[] = [];
 		if (!fast) {
 			try {
@@ -61,6 +73,12 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 				const dJson = (await dRes.json()) as { result?: ProgramDetail };
 				const detail = dJson.result;
 				onSaleAt = unixToIso(detail?.onlineStartTime);
+				youthSeat = hasYouthSeat(
+					detail?.saleInfoContent,
+					detail?.saleInfoNotice,
+					detail?.noticeContent,
+					detail?.description,
+				);
 				venue = detail?.eventVenues?.[0]?.venue?.name ?? null;
 				city = detail?.eventVenues?.[0]?.venue?.city ?? city;
 				description = htmlToText(detail?.description);
@@ -97,6 +115,7 @@ export async function scrapeOpenTix(): Promise<Show[]> {
 			url: EVENT_URL(p.id),
 			description,
 			notes: null,
+			youthSeat,
 			introImages: [],
 			organizer,
 			sessions,

@@ -9,6 +9,7 @@ import {
 	htmlToText,
 	extractHighlights,
 	contentImages,
+	hasYouthSeat,
 	firstDate,
 	extractPriceRange,
 	dateRangeFromDates,
@@ -65,6 +66,7 @@ export async function scrapeEra(): Promise<Show[]> {
 		let maxPrice: number | null = null;
 		let description: string | null = null;
 		let notes: string | null = null;
+		let youthSeat = false;
 		let introImages: string[] = [];
 		let organizer: string | null = null;
 		let rawSessions: EraSession[] = [];
@@ -84,6 +86,7 @@ export async function scrapeEra(): Promise<Show[]> {
 				introImages = contentImages(intro, DETAIL_URL(item.id));
 				organizer = root.querySelector('#ctl00_ContentPlaceHolder1_lbOrgName')?.text.trim() || null;
 				notes = extractHighlights(root.querySelector('.contents.tab-content')?.text);
+				youthSeat = hasYouthSeat(root.querySelector('.contents.tab-content')?.text);
 				await sleep(700);
 			} catch {}
 		}
@@ -119,6 +122,7 @@ export async function scrapeEra(): Promise<Show[]> {
 			url: DETAIL_URL(item.id),
 			description,
 			notes,
+			youthSeat,
 			introImages,
 			organizer,
 			sessions: cleanSessions,

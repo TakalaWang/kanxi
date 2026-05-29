@@ -11,9 +11,10 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { favorites } from '$lib/favorites.svelte';
 	import { GENRE_SLUG } from '$lib/genres';
-	import { REGION_ORDER, citiesInRegion } from '$lib/regions';
+	import { REGION_ORDER, REGIONS } from '$lib/regions';
 	import { findVenue } from '$lib/venues';
 	import { initialDark, applyDark } from '$lib/theme';
+	import FilterDropdown from '$lib/components/FilterDropdown.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -22,14 +23,14 @@
 	const allSources = Object.keys(SOURCE_LABELS) as Source[];
 
 	let query = $state('');
-	let activeSources = $state<Source[]>([]);
-	let region = $state('');
-	let city = $state('');
-	let category = $state('');
+	let activeSources = $state<string[]>([]);
+	let selectedCities = $state<string[]>([]);
+	let selectedCategories = $state<string[]>([]);
 	let fromDate = $state('');
 	let toDate = $state('');
 	let priceMin = $state('');
 	let priceMax = $state('');
+	let youthOnly = $state(false);
 	let sort = $state<'date-desc' | 'date-asc' | 'onsale' | 'price-asc' | 'price-desc'>('date-asc');
 	let selected = $state<Show | null>(null);
 	let showSubscribe = $state(false);
@@ -67,17 +68,22 @@
 		return [{ start: s.startDate, end: s.endDate, city: cityOf(s.city, s.venue) }];
 	}
 
-	const cities = $derived([...new Set(data.shows.flatMap(showCities))].sort());
+	const cities = $derived([...new Set(data.shows.flatMap(showCities))]);
 	const categories = $derived(
 		[...new Set(data.shows.map((s) => s.category).filter((c): c is string => !!c))].sort(),
 	);
 	const presentSources = $derived(allSources.filter((s) => data.shows.some((x) => x.source === s)));
 
-	function toggleSource(s: Source) {
-		activeSources = activeSources.includes(s)
-			? activeSources.filter((x) => x !== s)
-			: [...activeSources, s];
-	}
+	const regionGroups = $derived(
+		REGION_ORDER.map((r) => ({
+			label: r,
+			children: REGIONS[r].filter((c) => cities.includes(c)).map((c) => ({ value: c, label: c })),
+		})).filter((g) => g.children.length),
+	);
+	const categoryOptions = $derived(categories.map((c) => ({ value: c, label: c })));
+	const sourceOptions = $derived(
+		presentSources.map((s) => ({ value: s, label: SOURCE_LABELS[s] })),
+	);
 
 	function sortShows(a: Show, b: Show): number {
 		switch (sort) {
@@ -100,8 +106,9 @@
 			.filter((s) => {
 				if (onlyFavorites && !favorites.has(s.id)) return false;
 				if (activeSources.length && !activeSources.includes(s.source)) return false;
-				if (category && s.category !== category) return false;
-				const cityTargets = city ? [city] : region ? citiesInRegion(region) : null;
+				if (selectedCategories.length && (!s.category || !selectedCategories.includes(s.category)))
+					return false;
+				const cityTargets = selectedCities.length ? selectedCities : null;
 				const dateActive = !!fromDate || !!toDate;
 				if (cityTargets || dateActive) {
 					const lo = fromDate || '0000-01-01';
@@ -121,6 +128,7 @@
 					if (priceMin && s.minPrice < Number(priceMin)) return false;
 					if (priceMax && s.minPrice > Number(priceMax)) return false;
 				}
+				if (youthOnly && !s.youthSeat) return false;
 				if (q) {
 					const hay =
 						`${s.title} ${s.venue ?? ''} ${s.category ?? ''} ${s.organizer ?? ''}`.toLowerCase();
@@ -134,34 +142,34 @@
 	const hasFilters = $derived(
 		!!query ||
 			activeSources.length > 0 ||
-			!!region ||
-			!!city ||
-			!!category ||
+			selectedCities.length > 0 ||
+			selectedCategories.length > 0 ||
 			!!fromDate ||
 			!!toDate ||
 			!!priceMin ||
-			!!priceMax,
+			!!priceMax ||
+			youthOnly,
 	);
 
 	const activeFilterCount = $derived(
 		(activeSources.length ? 1 : 0) +
-			(region ? 1 : 0) +
-			(city ? 1 : 0) +
-			(category ? 1 : 0) +
+			(selectedCities.length ? 1 : 0) +
+			(selectedCategories.length ? 1 : 0) +
 			(fromDate || toDate ? 1 : 0) +
-			(priceMin || priceMax ? 1 : 0),
+			(priceMin || priceMax ? 1 : 0) +
+			(youthOnly ? 1 : 0),
 	);
 
 	function resetFilters() {
 		query = '';
 		activeSources = [];
-		region = '';
-		city = '';
-		category = '';
+		selectedCities = [];
+		selectedCategories = [];
 		fromDate = '';
 		toDate = '';
 		priceMin = '';
 		priceMax = '';
+		youthOnly = false;
 	}
 
 	$effect(() => {
@@ -378,93 +386,95 @@
 			/>
 		</button>
 	</div>
-</div>
-
-{#if showFilters}
-	<div
-		id="advanced-filters"
-		class="border-b border-curtain-100 bg-curtain-50/70 dark:border-white/10 dark:bg-[#16100f]/70"
-	>
-		<div class="mx-auto max-w-6xl space-y-3 px-5 py-3">
-			<div class="flex flex-wrap items-center gap-2">
-				<select bind:value={region} class={selectClass} aria-label="地區">
-					<option value="">全部地區</option>
-					{#each REGION_ORDER as r (r)}<option value={r}>{r}</option>{/each}
-				</select>
-				<select bind:value={city} class={selectClass} aria-label="縣市">
-					<option value="">全部縣市</option>
-					{#each cities as c (c)}<option value={c}>{c}</option>{/each}
-				</select>
-				<select bind:value={category} class={selectClass} aria-label="分類">
-					<option value="">全部分類</option>
-					{#each categories as c (c)}<option value={c}>{c}</option>{/each}
-				</select>
-
-				<span
-					class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 dark:border-white/15 dark:bg-white/5"
-				>
-					<Icon name="calendar" size={14} class="text-gray-400" />
-					<input type="date" bind:value={fromDate} class={fieldBorderless} aria-label="起始日期" />
-					<span class="text-gray-300 dark:text-gray-600">–</span>
-					<input type="date" bind:value={toDate} class={fieldBorderless} aria-label="結束日期" />
-				</span>
-
-				<span
-					class="flex items-center gap-1 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400"
-				>
-					<Icon name="tag" size={14} class="text-gray-400" />
-					<span class="text-xs">NT$</span>
-					<input
-						type="number"
-						min="0"
-						bind:value={priceMin}
-						placeholder="最低"
-						class="w-14 {fieldBorderless}"
-						aria-label="最低票價"
+	{#if showFilters}
+		<div
+			id="advanced-filters"
+			class="border-b border-curtain-100 bg-curtain-50/70 dark:border-white/10 dark:bg-[#16100f]/70"
+		>
+			<div class="mx-auto max-w-6xl space-y-3 px-5 py-3">
+				<div class="flex flex-wrap items-center gap-2">
+					<FilterDropdown
+						label="地區 / 縣市"
+						groups={regionGroups}
+						bind:selected={selectedCities}
 					/>
-					<span class="text-gray-300 dark:text-gray-600">–</span>
-					<input
-						type="number"
-						min="0"
-						bind:value={priceMax}
-						placeholder="最高"
-						class="w-14 {fieldBorderless}"
-						aria-label="最高票價"
+					<FilterDropdown
+						label="分類"
+						options={categoryOptions}
+						bind:selected={selectedCategories}
 					/>
-				</span>
+					<FilterDropdown label="售票系統" options={sourceOptions} bind:selected={activeSources} />
 
-				<select bind:value={sort} class={selectClass} aria-label="排序">
-					<option value="date-asc">排序：演出日期早→晚</option>
-					<option value="date-desc">演出日期晚→早</option>
-					<option value="onsale">開賣時間近→遠</option>
-					<option value="price-asc">票價低→高</option>
-					<option value="price-desc">票價高→低</option>
-				</select>
-			</div>
+					<span
+						class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 dark:border-white/15 dark:bg-white/5"
+					>
+						<Icon name="calendar" size={14} class="text-gray-400" />
+						<input
+							type="date"
+							bind:value={fromDate}
+							class={fieldBorderless}
+							aria-label="起始日期"
+						/>
+						<span class="text-gray-300 dark:text-gray-600">–</span>
+						<input type="date" bind:value={toDate} class={fieldBorderless} aria-label="結束日期" />
+					</span>
 
-			<div class="flex flex-wrap items-center gap-2 text-sm">
-				{#each presentSources as s (s)}
-					<button
-						onclick={() => toggleSource(s)}
-						class="rounded-full border px-3 py-1 transition {activeSources.includes(s)
+					<span
+						class="flex items-center gap-1 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400"
+					>
+						<Icon name="tag" size={14} class="text-gray-400" />
+						<span class="text-xs">NT$</span>
+						<input
+							type="number"
+							min="0"
+							bind:value={priceMin}
+							placeholder="最低"
+							class="w-14 {fieldBorderless}"
+							aria-label="最低票價"
+						/>
+						<span class="text-gray-300 dark:text-gray-600">–</span>
+						<input
+							type="number"
+							min="0"
+							bind:value={priceMax}
+							placeholder="最高"
+							class="w-14 {fieldBorderless}"
+							aria-label="最高票價"
+						/>
+					</span>
+
+					<label
+						class="flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-sm transition {youthOnly
 							? 'border-curtain-600 bg-curtain-600 text-white'
 							: 'border-gray-300 bg-white text-gray-600 hover:border-curtain-400 dark:border-white/15 dark:bg-white/5 dark:text-gray-300'}"
 					>
-						{SOURCE_LABELS[s]}
-					</button>
-				{/each}
+						<input type="checkbox" bind:checked={youthOnly} class="sr-only" />
+						<Icon name="ticket" size={14} /> 青年席
+					</label>
+
+					<select bind:value={sort} class={selectClass} aria-label="排序">
+						<option value="date-asc">排序：演出日期早→晚</option>
+						<option value="date-desc">演出日期晚→早</option>
+						<option value="onsale">開賣時間近→遠</option>
+						<option value="price-asc">票價低→高</option>
+						<option value="price-desc">票價高→低</option>
+					</select>
+				</div>
+
 				{#if hasFilters}
-					<button
-						onclick={resetFilters}
-						class="ml-auto flex items-center gap-1 text-gray-400 underline hover:text-curtain-600"
-					>
-						<Icon name="x" size={13} /> 清除篩選
-					</button>
+					<div class="flex">
+						<button
+							onclick={resetFilters}
+							class="ml-auto flex items-center gap-1 text-sm text-gray-400 underline hover:text-curtain-600"
+						>
+							<Icon name="x" size={13} /> 清除篩選
+						</button>
+					</div>
 				{/if}
 			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
+</div>
 
 {#if showSubscribe}
 	<div class="border-b border-curtain-100 bg-white dark:border-white/10 dark:bg-[#1e1716]">

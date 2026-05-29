@@ -9,6 +9,7 @@ import {
 	htmlToText,
 	extractHighlights,
 	contentImages,
+	hasYouthSeat,
 	firstDate,
 	dateRangeFromDates,
 } from './util';
@@ -61,6 +62,7 @@ export async function scrapeKham(): Promise<Show[]> {
 		let onSaleAt: string | null = null;
 		let description: string | null = null;
 		let notes: string | null = null;
+		let youthSeat = false;
 		let introImages: string[] = [];
 		let sessions: Session[] = [];
 
@@ -75,6 +77,7 @@ export async function scrapeKham(): Promise<Show[]> {
 				description = htmlToText(intro?.innerHTML);
 				introImages = contentImages(intro, DETAIL_URL(item.id));
 				notes = extractHighlights(root.querySelector('#divbtn02')?.text);
+				youthSeat = hasYouthSeat(root.querySelector('#showInfo')?.text);
 				await sleep(500);
 			} catch {}
 		}
@@ -104,6 +107,7 @@ export async function scrapeKham(): Promise<Show[]> {
 			url: DETAIL_URL(item.id),
 			description,
 			notes,
+			youthSeat,
 			introImages,
 			organizer: null,
 			sessions,

@@ -1,5 +1,12 @@
 import type { Show, Session } from '../../types';
-import { politeFetch, sleep, classifyGenre, looksTheatrical, cityFromText } from './util';
+import {
+	politeFetch,
+	sleep,
+	classifyGenre,
+	looksTheatrical,
+	cityFromText,
+	hasYouthSeat,
+} from './util';
 
 const ORGANIZERS: { slug: string; mode: 'all' | 'filter' }[] = [
 	{ slug: 'godot', mode: 'all' },
@@ -100,6 +107,8 @@ export async function scrapeKktix(): Promise<Show[]> {
 				const effectiveEnd = endDate ?? startDate;
 				if (effectiveEnd && effectiveEnd < today) continue;
 
+				const youthSeat = hasYouthSeat(entry.summary, entry.content, entry.title);
+
 				shows.push({
 					id: `kktix:${id}`,
 					source: 'kktix',
@@ -117,6 +126,7 @@ export async function scrapeKktix(): Promise<Show[]> {
 					url: entry.url,
 					description: detail ? null : (entry.summary ?? null),
 					notes: null,
+					youthSeat,
 					introImages: [],
 					organizer: null,
 					sessions: [] as Session[],

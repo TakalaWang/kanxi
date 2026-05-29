@@ -33,6 +33,7 @@ export interface Show {
 	url: string;
 	description: string | null;
 	notes: string | null;
+	youthSeat: boolean;
 	introImages: string[];
 	organizer: string | null;
 	sessions: Session[];

@@ -5,7 +5,7 @@
     <link>https://onstage.takalawang.dev</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and KKTIX.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 29 May 2026 15:42:26 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 16:34:41 GMT</lastBuildDate>
     <item>
       <title>《孫臏 -終-》</title>
       <link>https://www.opentix.life/event/2056628721904320512</link>
@@ -327,20 +327,20 @@
       <description>Date: 2026-06-12 – 2026-06-14 · Venue: 國立臺灣藝術大學實驗劇場（八角廳）, 新北市 · On sale: 2026-05-15 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
-      <title>葛勞康馬戲團</title>
-      <link>https://www.opentix.life/event/2050910475496886273</link>
-      <guid isPermaLink="false">opentix:2050910475496886273</guid>
-      <pubDate>Fri, 15 May 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-07-03 – 2026-07-05 · Venue: 台北偶戲館黑箱劇場, 臺北市 · On sale: 2026-05-15 · Source: OPENTIX 兩廳院</description>
-    </item>
-    <item>
       <title>2026貓裏表演藝術節《天亮前的愛情故事》</title>
       <link>https://www.opentix.life/event/2049761958741397505</link>
       <guid isPermaLink="false">opentix:2049761958741397505</guid>
       <pubDate>Fri, 15 May 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-07-03 – 2026-07-04 · Venue: More cafe 磨咖啡, 苗栗縣 · On sale: 2026-05-15 · Source: OPENTIX 兩廳院</description>
+    </item>
+    <item>
+      <title>葛勞康馬戲團</title>
+      <link>https://www.opentix.life/event/2050910475496886273</link>
+      <guid isPermaLink="false">opentix:2050910475496886273</guid>
+      <pubDate>Fri, 15 May 2026 04:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-07-03 – 2026-07-05 · Venue: 台北偶戲館黑箱劇場, 臺北市 · On sale: 2026-05-15 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
       <title>2026貓裏表演藝術節《H&amp;G2：Encore糖果屋！》互動結局版</title>
@@ -799,12 +799,12 @@
       <description>Date: 2026-07-03 – 2026-10-18 · Venue: 臺北市藝文推廣處城市舞台, 臺北市 · On sale: 2026-04-27 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
-      <title>《南洋過番歌》</title>
-      <link>https://www.opentix.life/event/2046191920501002241</link>
-      <guid isPermaLink="false">opentix:2046191920501002241</guid>
+      <title>雷音劇坊《青瞑的龍蛇無青瞑》</title>
+      <link>https://www.opentix.life/event/2044680530362298369</link>
+      <guid isPermaLink="false">opentix:2044680530362298369</guid>
       <pubDate>Fri, 24 Apr 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-05-30 · Venue: 恆春文化中心劇場館表演廳, 屏東縣 · On sale: 2026-04-24 · Source: OPENTIX 兩廳院</description>
+      <description>Date: 2026-05-30 – 2026-07-31 · Venue: 新嘉義座, 嘉義市 · On sale: 2026-04-24 · Source: OPENTIX 兩廳院</description>
     </item>
   </channel>
 </rss>

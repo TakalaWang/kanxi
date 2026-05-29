@@ -119,6 +119,10 @@ export function contentImages(
 	return urls;
 }
 
+export function hasYouthSeat(...texts: (string | null | undefined)[]): boolean {
+	return /青年席|青年票|青年方案|青年優惠/.test(texts.filter(Boolean).join(' '));
+}
+
 export function extractOnSale(text: string): string | null {
 	const idx = text.search(/開賣|售票時間|啟售|開始售票/);
 	if (idx < 0) return null;

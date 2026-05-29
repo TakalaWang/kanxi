@@ -6,6 +6,7 @@ import {
 	looksTheatrical,
 	cityFromText,
 	htmlToText,
+	hasYouthSeat,
 } from './util';
 
 const SEARCH_API = 'https://api.accupass.com/v3/search/SearchEvents';
@@ -157,6 +158,7 @@ export async function scrapeAccupass(): Promise<Show[]> {
 			let city: string | null = it.location ? (EN_CITY[it.location] ?? null) : null;
 			let description: string | null = null;
 			let organizer: string | null = null;
+			let youthSeat = false;
 			let imageUrl: string | null = it.photoUrl ?? null;
 			let startDate = isoToTaipeiDate(it.startDateTime);
 			let endDate = isoToTaipeiDate(it.endDateTime);
@@ -171,6 +173,7 @@ export async function scrapeAccupass(): Promise<Show[]> {
 						venue = ld.location?.name ?? venue;
 						city = cityFromText(ld.location?.address ?? ld.location?.name) ?? city;
 						description = htmlToText(ld.description);
+						youthSeat = hasYouthSeat(ld.description);
 						organizer = ld.organizer?.name ?? null;
 						imageUrl = ld.image ?? imageUrl;
 						startDate = ld.startDate ? ld.startDate.slice(0, 10) : startDate;
@@ -196,6 +199,7 @@ export async function scrapeAccupass(): Promise<Show[]> {
 				url: EVENT_URL(id),
 				description,
 				notes: null,
+				youthSeat,
 				introImages: [],
 				organizer,
 				sessions: [] as Session[],

@@ -8,6 +8,7 @@ import {
 	htmlToText,
 	extractHighlights,
 	contentImages,
+	hasYouthSeat,
 	firstDate,
 	extractPriceRange,
 	dateRangeFromDates,
@@ -82,6 +83,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 		let city: string | null = null;
 		let description: string | null = null;
 		let notes: string | null = null;
+		let youthSeat = false;
 		let introImages: string[] = [];
 		let sessions: Session[] = [];
 
@@ -104,6 +106,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 				notes = extractHighlights(
 					`${root.querySelector('.admissionNote')?.text ?? ''} ${root.querySelector('.yd_program-main')?.text ?? ''}`,
 				);
+				youthSeat = hasYouthSeat(root.querySelector('.yd_program-main')?.text);
 				await sleep(400);
 			} catch {}
 		}
@@ -134,6 +137,7 @@ export async function scrapeUdn(): Promise<Show[]> {
 			url: DETAIL_URL(item.id),
 			description,
 			notes,
+			youthSeat,
 			introImages,
 			organizer: null,
 			sessions,
