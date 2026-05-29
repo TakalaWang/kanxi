@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { SOURCE_LABELS, type Show } from '$lib/types';
 	import { fmtDateRange, fmtPrice, fmtOnSale, SOURCE_COLOR } from '$lib/format';
+	import Icon from './Icon.svelte';
 
 	let { show, onclose }: { show: Show; onclose: () => void } = $props();
 
@@ -13,14 +14,14 @@
 
 <!-- backdrop -->
 <div
-	class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm sm:p-8"
+	class="animate-overlay-in fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-curtain-950/70 p-4 backdrop-blur-md sm:p-8"
 	role="presentation"
 	onclick={(e) => {
 		if (e.target === e.currentTarget) onclose();
 	}}
 >
 	<div
-		class="my-auto w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+		class="animate-pop-in my-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5"
 		role="dialog"
 		aria-modal="true"
 		aria-label={show.title}
@@ -31,61 +32,66 @@
 					src={show.imageUrl}
 					alt={show.title}
 					referrerpolicy="no-referrer"
-					class="max-h-80 w-full object-contain bg-gray-900"
+					class="max-h-80 w-full bg-curtain-950 object-contain"
 				/>
 			{/if}
 			<button
 				type="button"
 				onclick={onclose}
 				aria-label="關閉"
-				class="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-lg text-white hover:bg-black/70"
+				class="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-curtain-950/55 text-white backdrop-blur transition hover:bg-curtain-950/80 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
 			>
-				✕
+				<Icon name="x" size={18} />
 			</button>
 		</div>
 
-		<div class="space-y-4 p-6">
+		<div class="space-y-5 p-6">
 			<div class="flex flex-wrap items-center gap-2">
-				<span class="rounded px-2 py-0.5 text-xs font-medium {SOURCE_COLOR[show.source]}">
+				<span class="rounded-full px-2 py-0.5 text-xs font-medium {SOURCE_COLOR[show.source]}">
 					{SOURCE_LABELS[show.source]}
 				</span>
 				{#if show.category}<span class="text-xs text-gray-500">{show.category}</span>{/if}
 				{#if show.heuristic}
-					<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500">疑似戲劇（關鍵字推測）</span>
+					<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">疑似戲劇（關鍵字推測）</span>
 				{/if}
 			</div>
 
-			<h2 class="text-xl font-bold leading-snug text-gray-900">{show.title}</h2>
+			<h2 class="font-display text-2xl font-semibold leading-snug text-gray-900">{show.title}</h2>
 
-			<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+			<dl class="grid grid-cols-[1.25rem_auto_1fr] items-center gap-x-2 gap-y-3 text-sm">
+				<Icon name="calendar" size={16} class="text-curtain-500" />
 				<dt class="text-gray-400">演出日期</dt>
 				<dd class="text-gray-800">{fmtDateRange(show)}</dd>
 				{#if show.venue || show.city}
+					<Icon name="map-pin" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">場館</dt>
 					<dd class="text-gray-800">{show.venue ?? ''}{show.city ? ` · ${show.city}` : ''}</dd>
 				{/if}
 				{#if fmtOnSale(show.onSaleAt, true)}
+					<Icon name="ticket" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">開賣時間</dt>
 					<dd class="font-medium text-curtain-600">{fmtOnSale(show.onSaleAt, true)}</dd>
 				{/if}
 				{#if fmtPrice(show)}
+					<Icon name="tag" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">票價</dt>
 					<dd class="text-gray-800">{fmtPrice(show)}</dd>
 				{/if}
 				{#if show.organizer}
+					<Icon name="building" size={16} class="text-curtain-500" />
 					<dt class="text-gray-400">主辦</dt>
 					<dd class="text-gray-800">{show.organizer}</dd>
 				{/if}
 			</dl>
 
 			{#if show.sessions.length > 1}
-				<div>
-					<p class="mb-1 text-sm font-medium text-gray-700">各場次</p>
-					<ul class="space-y-1 text-sm text-gray-600">
+				<div class="rounded-2xl bg-curtain-50 p-4">
+					<p class="mb-2 text-sm font-medium text-gray-700">各場次</p>
+					<ul class="space-y-1.5 text-sm text-gray-600">
 						{#each show.sessions as session, i (i)}
-							<li class="flex flex-wrap gap-x-2">
-								<span>{session.date ? session.date.replaceAll('-', '/') : '—'}</span>
-								{#if session.venue}<span class="text-gray-400">·</span><span>{session.venue}</span>{/if}
+							<li class="flex flex-wrap items-center gap-x-2">
+								<span class="tabular-nums">{session.date ? session.date.replaceAll('-', '/') : '—'}</span>
+								{#if session.venue}<span class="text-gray-300">·</span><span>{session.venue}</span>{/if}
 								{#if fmtOnSale(session.onSaleAt)}
 									<span class="text-curtain-600">（{fmtOnSale(session.onSaleAt)} 開賣）</span>
 								{/if}
@@ -105,9 +111,10 @@
 				href={show.url}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="block w-full rounded-lg bg-curtain-600 py-3 text-center font-medium text-white transition hover:bg-curtain-700"
+				class="flex w-full items-center justify-center gap-2 rounded-xl bg-curtain-600 py-3.5 text-center font-medium text-white transition hover:bg-curtain-700 active:scale-[0.99]"
 			>
-				前往 {SOURCE_LABELS[show.source]} 購票 ↗
+				前往 {SOURCE_LABELS[show.source]} 購票
+				<Icon name="arrow-up-right" size={16} />
 			</a>
 			<p class="text-center text-xs text-gray-400">本站不販售門票，點擊將前往官方售票頁</p>
 		</div>
