@@ -37,7 +37,7 @@
 	let showFeedback = $state(false);
 	let onlyFavorites = $state(false);
 	let showFilters = $state(false);
-	let visible = $state(48);
+	let visible = $state(24);
 	let sentinel = $state<HTMLElement | null>(null);
 	let dark = $state(initialDark());
 	let curtain = $state(!introPlayed);
@@ -180,7 +180,7 @@
 	}
 
 	$effect(() => {
-		if (filtered) visible = 48;
+		if (filtered) visible = 24;
 	});
 
 	$effect(() => {

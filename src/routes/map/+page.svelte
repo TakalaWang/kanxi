@@ -4,6 +4,7 @@
 	import { findVenue, type Venue } from '$lib/venues';
 	import { SOURCE_LABELS, type Show } from '$lib/types';
 	import { fmtDateRange } from '$lib/format';
+	import { thumb } from '$lib/img';
 	import { initialDark, applyDark } from '$lib/theme';
 	import ShowModal from '$lib/components/ShowModal.svelte';
 	import Icon from '$lib/components/Icon.svelte';
@@ -154,7 +155,7 @@
 						>
 							{#if s.imageUrl}
 								<img
-									src={s.imageUrl}
+									src={thumb(s.imageUrl, 140)}
 									alt=""
 									loading="lazy"
 									decoding="async"

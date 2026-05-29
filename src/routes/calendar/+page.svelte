@@ -2,6 +2,7 @@
 	import { SOURCE_LABELS, type Show } from '$lib/types';
 	import { fmtDateRange, SOURCE_COLOR } from '$lib/format';
 	import { initialDark, applyDark } from '$lib/theme';
+	import { thumb } from '$lib/img';
 	import ShowModal from '$lib/components/ShowModal.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { PageData } from './$types';
@@ -329,7 +330,7 @@
 							>
 								{#if show.imageUrl}
 									<img
-										src={show.imageUrl}
+										src={thumb(show.imageUrl, 140)}
 										alt=""
 										loading="lazy"
 										decoding="async"

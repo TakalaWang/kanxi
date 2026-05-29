@@ -3,6 +3,7 @@
 	import { fmtDateRange, fmtPrice, fmtOnSale, SOURCE_COLOR } from '$lib/format';
 	import { downloadShowIcs } from '$lib/ics';
 	import { loadDescription } from '$lib/descriptions';
+	import { thumb } from '$lib/img';
 	import { fade, scale } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { prefersReducedMotion } from 'svelte/motion';
@@ -62,8 +63,9 @@
 		<div class="relative">
 			{#if show.imageUrl}
 				<img
-					src={show.imageUrl}
+					src={thumb(show.imageUrl, 800)}
 					alt={show.title}
+					decoding="async"
 					referrerpolicy="no-referrer"
 					class="max-h-80 w-full bg-curtain-950 object-contain"
 				/>
@@ -186,7 +188,7 @@
 					{/if}
 					{#each show.introImages as img, i (i)}
 						<img
-							src={img}
+							src={thumb(img, 900)}
 							alt={`${show.title} 節目介紹圖 ${i + 1}`}
 							loading="lazy"
 							decoding="async"

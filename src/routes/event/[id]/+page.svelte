@@ -4,6 +4,7 @@
 	import { downloadShowIcs } from '$lib/ics';
 	import { eventPath } from '$lib/slug';
 	import { initialDark, applyDark } from '$lib/theme';
+	import { thumb } from '$lib/img';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { PageData } from './$types';
 
@@ -116,8 +117,9 @@
 	>
 		{#if show.imageUrl}
 			<img
-				src={show.imageUrl}
+				src={thumb(show.imageUrl, 900)}
 				alt={show.title}
+				decoding="async"
 				referrerpolicy="no-referrer"
 				class="max-h-96 w-full bg-curtain-950 object-contain"
 			/>
@@ -230,7 +232,7 @@
 				<div class="space-y-3">
 					{#each show.introImages as img, i (i)}
 						<img
-							src={img}
+							src={thumb(img, 900)}
 							alt={`${show.title} 節目介紹圖 ${i + 1}`}
 							loading="lazy"
 							decoding="async"
