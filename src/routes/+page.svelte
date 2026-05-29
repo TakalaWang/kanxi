@@ -301,7 +301,7 @@
 				<img src={favicon} alt="" class="h-14 w-14 rounded-2xl shadow-lg" />
 				<div class="mt-3 text-4xl font-bold tracking-tight text-amber-50">幕間</div>
 				<div class="mt-1 font-display text-lg italic text-gold-400">OnStage TW</div>
-				<div class="mt-3 text-xs tracking-[0.25em] text-amber-100/70">台灣戲劇演出，一站看完</div>
+				<div class="mt-3 text-xs tracking-[0.25em] text-amber-100/70">台灣戲劇演出整合平台</div>
 			</div>
 		</div>
 	</div>
@@ -322,7 +322,7 @@
 			<span
 				class="ml-1 hidden border-l border-gray-200 pl-3 text-sm text-gray-400 lg:inline dark:border-white/15"
 			>
-				台灣戲劇演出，一站看完
+				台灣戲劇演出整合平台
 			</span>
 		</div>
 		<div class="flex shrink-0 items-center gap-2">
