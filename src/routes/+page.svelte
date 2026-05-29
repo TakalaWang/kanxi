@@ -35,7 +35,15 @@
 	let visible = $state(48);
 	let sentinel = $state<HTMLElement | null>(null);
 	let dark = $state(false);
-	let curtain = $state(true); // one-time stage-curtain reveal on load
+	// Stage-curtain reveal: play once per browser session, not on every return to home.
+	let curtain = $state(shouldShowCurtain());
+	function shouldShowCurtain(): boolean {
+		try {
+			return !sessionStorage.getItem('introShown');
+		} catch {
+			return true; // SSR/prerender (no sessionStorage): render it so first paint has it
+		}
+	}
 
 	// Resolve a city at read time: prefer an explicit city, else look the venue up in
 	// the venue registry. This lets an expanded venue list improve filtering without
@@ -185,9 +193,21 @@
 		dark = document.documentElement.classList.contains('dark');
 		// Filters collapse on every screen; default them open on desktop, closed on mobile.
 		showFilters = matchMedia('(min-width: 640px)').matches;
-		// Skip the curtain reveal when reduced motion is requested.
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches) curtain = false;
-		else {
+		// Skip the curtain if reduced-motion is requested or it already played this session.
+		let alreadyShown = true;
+		try {
+			alreadyShown = !!sessionStorage.getItem('introShown');
+		} catch {
+			alreadyShown = false;
+		}
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches || alreadyShown) {
+			curtain = false;
+		} else {
+			try {
+				sessionStorage.setItem('introShown', '1');
+			} catch {
+				/* ignore */
+			}
 			const t = setTimeout(() => (curtain = false), 1900);
 			return () => clearTimeout(t);
 		}

@@ -84,7 +84,9 @@ export function writeOutputs(shows: Show[]): { count: number } {
 	const descriptions: Record<string, string> = {};
 	const light = active.map((s) => {
 		if (s.description) descriptions[s.id] = s.description;
-		return { ...s, description: null };
+		// Upgrade image links to https so they aren't blocked as mixed content.
+		const imageUrl = s.imageUrl?.replace(/^http:\/\//i, 'https://') ?? null;
+		return { ...s, imageUrl, description: null };
 	});
 	writeFileSync(
 		`${OUT_DIR}/shows.json`,

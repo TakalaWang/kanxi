@@ -141,10 +141,22 @@
 					<li>
 						<button
 							onclick={() => (selected = s)}
-							class="w-full rounded-lg px-2 py-2 text-left text-sm transition hover:bg-curtain-50 dark:hover:bg-white/5"
+							class="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-sm transition hover:bg-curtain-50 dark:hover:bg-white/5"
 						>
-							<span class="line-clamp-1 font-medium text-gray-800 dark:text-gray-100">{s.title}</span>
-							<span class="text-xs text-gray-400">{fmtDateRange(s)} · {SOURCE_LABELS[s.source]}</span>
+							{#if s.imageUrl}
+								<img
+									src={s.imageUrl}
+									alt=""
+									loading="lazy"
+									decoding="async"
+									referrerpolicy="no-referrer"
+									class="h-14 w-11 shrink-0 rounded-md object-cover ring-1 ring-black/5 dark:ring-white/10"
+								/>
+							{/if}
+							<span class="min-w-0 flex-1">
+								<span class="line-clamp-2 font-medium text-gray-800 dark:text-gray-100">{s.title}</span>
+								<span class="mt-0.5 block text-xs text-gray-400">{fmtDateRange(s)} · {SOURCE_LABELS[s.source]}</span>
+							</span>
 						</button>
 					</li>
 				{/each}

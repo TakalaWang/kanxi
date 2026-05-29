@@ -161,19 +161,6 @@
 		activeKey = cell.key;
 	}
 
-	// Small dot colour per source, reusing SOURCE_COLOR's text-* token as the bg.
-	function dotClass(source: Show['source']): string {
-		const token = SOURCE_COLOR[source].split(' ').find((c) => c.startsWith('text-'));
-		return token ? token.replace('text-', 'bg-') : 'bg-gray-400';
-	}
-
-	// Unique source dots for a cell, capped, for the compact grid indicator.
-	function cellSources(shows: Show[]): Show['source'][] {
-		const seen = new Set<Show['source']>();
-		for (const s of shows) seen.add(s.source);
-		return [...seen];
-	}
-
 	const updatedLabel = $derived(
 		data.updatedAt
 			? new Date(data.updatedAt).toLocaleString('zh-TW', {
@@ -334,13 +321,10 @@
 								</span>
 
 								{#if has}
-									<!-- Source dots (all breakpoints) -->
-									<span class="mt-1 flex flex-wrap items-center justify-center gap-0.5">
-										{#each cellSources(cell.shows).slice(0, 4) as src (src)}
-											<span class="h-1.5 w-1.5 rounded-full {dotClass(src)}"></span>
-										{/each}
-									</span>
-									<!-- Count badge: bottom on desktop, hidden on phones (dots suffice) -->
+									<!-- Count indicator: a dot on phones, a "N 場" pill on larger screens. -->
+									<span
+										class="mt-1 h-1.5 w-1.5 rounded-full bg-curtain-500 sm:hidden"
+									></span>
 									<span
 										class="mt-auto hidden rounded-full bg-curtain-50 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-curtain-700 sm:inline-block dark:bg-white/10 dark:text-curtain-300"
 									>
@@ -352,18 +336,6 @@
 							<div class="aspect-square sm:aspect-[4/3]"></div>
 						{/if}
 					{/each}
-				{/each}
-			</div>
-
-			<!-- Source legend -->
-			<div
-				class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500 dark:text-gray-400"
-			>
-				{#each Object.entries(SOURCE_LABELS) as [source, label] (source)}
-					<span class="flex items-center gap-1.5">
-						<span class="h-2 w-2 rounded-full {dotClass(source as Show['source'])}"></span>
-						{label}
-					</span>
 				{/each}
 			</div>
 		</div>
@@ -385,7 +357,18 @@
 								onclick={() => (selected = show)}
 								class="flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left transition hover:bg-curtain-50 dark:hover:bg-white/5"
 							>
-								<span class="mt-1.5 h-2 w-2 shrink-0 rounded-full {dotClass(show.source)}"></span>
+								{#if show.imageUrl}
+									<img
+										src={show.imageUrl}
+										alt=""
+										loading="lazy"
+										decoding="async"
+										referrerpolicy="no-referrer"
+										class="h-14 w-11 shrink-0 rounded-md object-cover ring-1 ring-black/5 dark:ring-white/10"
+									/>
+								{:else}
+									<span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-curtain-400"></span>
+								{/if}
 								<span class="min-w-0 flex-1">
 									<span
 										class="line-clamp-2 text-sm font-medium text-gray-800 dark:text-gray-100"

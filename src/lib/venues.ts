@@ -823,7 +823,56 @@ export const VENUES: Venue[] = [
 		city: '臺北市',
 		lat: 25.0469,
 		lng: 121.5174 // approx — 中正區
-	}
+	},
+
+	// ---- Added from scraped-but-unmapped venues (researched coordinates) ----
+	{ name: 'PLAYground 南村劇場', aliases: ['南村劇場', 'PLAYground'], city: '臺北市', lat: 25.03196, lng: 121.56168 },
+	{ name: '臺北市政大樓親子劇場', aliases: ['市政大樓親子劇場'], city: '臺北市', lat: 25.03763, lng: 121.56398 },
+	{ name: '台北偶戲館', aliases: ['台北偶戲館'], city: '臺北市', lat: 25.04896, lng: 121.5615 },
+	{ name: '台北車站演藝廳', aliases: ['台北車站演藝廳'], city: '臺北市', lat: 25.04781, lng: 121.51702 },
+	{ name: '中影八德大樓演講廳', aliases: ['中影八德大樓', '八德大樓演講廳'], city: '臺北市', lat: 25.04822, lng: 121.5432 },
+	{ name: '新莊文化藝術中心', aliases: ['新莊文化藝術中心'], city: '新北市', lat: 25.04722, lng: 121.44417 },
+	{ name: '樹林藝文中心', aliases: ['樹林藝文中心'], city: '新北市', lat: 24.99099, lng: 121.42548 },
+	{ name: '臺灣文學糧倉', aliases: ['臺灣文學糧倉', '文學糧倉'], city: '臺北市', lat: 25.04539, lng: 121.52455 },
+	{ name: '臺灣大學藝文中心遊心劇場', aliases: ['遊心劇場'], city: '臺北市', lat: 25.0167, lng: 121.54057 },
+	{ name: '臺北市客家音樂戲劇中心', aliases: ['客家音樂戲劇中心'], city: '臺北市', lat: 25.012, lng: 121.53082 },
+	{ name: '信誼好好生活廣場-知新劇場', aliases: ['知新劇場', '信誼好好生活廣場'], city: '臺北市', lat: 25.02953, lng: 121.5138 },
+	{ name: '四號公園文創演藝廳', aliases: ['四號公園文創'], city: '新北市', lat: 25.00069, lng: 121.51365 },
+	{ name: '米倉劇場', aliases: ['米倉劇場'], city: '桃園市', lat: 24.99607, lng: 121.3113 },
+	{ name: '世新大學大禮堂', aliases: ['世新大學大禮堂', '世新大學'], city: '臺北市', lat: 24.9905, lng: 121.54117 },
+	{ name: '兒童新樂園 DDBox', aliases: ['兒童新樂園', 'DDBox'], city: '臺北市', lat: 25.09764, lng: 121.51547 },
+	{ name: '華山1914文創園區', aliases: ['華山1914', '華山中3館', '華山文創'], city: '臺北市', lat: 25.0442, lng: 121.5295 },
+	{ name: '林森59', aliases: ['林森59'], city: '臺北市', lat: 25.04398, lng: 121.5226 },
+	{ name: 'iM Dimension 展演空間', aliases: ['DIMEN5ION'], city: '臺北市', lat: 25.0336, lng: 121.5708 }, // approx
+	{ name: '台江文化中心台江劇場', aliases: ['台江劇場', '台江文化中心'], city: '臺南市', lat: 23.04617, lng: 120.18795 },
+	{ name: '國立臺中教育大學寶成演藝廳', aliases: ['寶成演藝廳'], city: '臺中市', lat: 24.14363, lng: 120.67177 },
+	{ name: '臺南文創園區 漂丿白鷺', aliases: ['漂丿白鷺'], city: '臺南市', lat: 22.99948, lng: 120.21273 },
+	{ name: '新嘉義座', aliases: ['新嘉義座'], city: '嘉義市', lat: 23.47657, lng: 120.43917 },
+	{ name: '雲林縣北港文化中心', aliases: ['北港文化中心'], city: '雲林縣', lat: 23.5783, lng: 120.30157 },
+	{ name: '國立科學工藝博物館南館演講廳', aliases: ['科工館南館', '科學工藝博物館'], city: '高雄市', lat: 22.6416, lng: 120.32269 },
+	{ name: '高雄市電影館', aliases: ['高雄市電影館'], city: '高雄市', lat: 22.62248, lng: 120.28882 },
+	{ name: '鸚鵡螺餐酒館-五福店', aliases: ['鸚鵡螺餐酒館'], city: '高雄市', lat: 22.6227, lng: 120.28485 },
+	{ name: '高雄市岡山皮影戲館', aliases: ['岡山皮影戲館'], city: '高雄市', lat: 22.78272, lng: 120.29848 },
+	{ name: '內惟藝術中心', aliases: ['內惟藝術中心'], city: '高雄市', lat: 22.6576, lng: 120.28241 },
+	{ name: '臺灣豫劇團大排練場', aliases: ['臺灣豫劇團'], city: '高雄市', lat: 22.69124, lng: 120.29073 },
+	{ name: '新營火車站大廳', aliases: ['新營火車站'], city: '臺南市', lat: 23.3064, lng: 120.32334 },
+	{ name: '臺東縣政府文化處藝文中心演藝廳', aliases: ['臺東縣政府文化處藝文中心'], city: '臺東縣', lat: 22.75653, lng: 121.14465 },
+	{ name: '澎湖縣演藝廳', aliases: ['澎湖縣演藝廳'], city: '澎湖縣', lat: 23.57134, lng: 119.57794 },
+	{ name: '花蓮豐田大同戲院', aliases: ['花蓮豐田', '大同戲院'], city: '花蓮縣', lat: 23.84924, lng: 121.49509 },
+	{ name: 'More cafe 磨咖啡', aliases: ['More cafe 磨咖啡'], city: '苗栗縣', lat: 24.56468, lng: 120.81281 }, // approx
+	{ name: '念清居咖啡', aliases: ['念清居'], city: '苗栗縣', lat: 24.4905, lng: 120.6828 }, // approx
+	{ name: '幽谷書屋', aliases: ['幽谷書屋'], city: '苗栗縣', lat: 24.48882, lng: 120.68435 }, // approx
+	{ name: 'Basis Coffee', aliases: ['Basis Coffee'], city: '臺北市', lat: 25.05314, lng: 121.53998 }, // approx
+	{ name: '劉戀藝文空間', aliases: ['劉戀藝文空間'], city: '新北市', lat: 25.03903, lng: 121.4619 }, // approx
+	{ name: '群島藝術園區 小劇院', aliases: ['群島藝術園區'], city: '臺中市', lat: 24.18314, lng: 120.6482 }, // approx
+	{ name: '大事件劇場', aliases: ['大事件劇場'], city: '高雄市', lat: 22.68879, lng: 120.29656 }, // approx
+	{ name: '新藝向玩藝所', aliases: ['新藝向玩藝所'], city: '臺北市', lat: 25.0298, lng: 121.51534 }, // approx
+	{ name: '一文錢．烏托邦', aliases: ['一文錢'], city: '臺北市', lat: 25.04996, lng: 121.5578 }, // approx
+	{ name: '樂君亭喜劇基地', aliases: ['樂君亭'], city: '桃園市', lat: 24.96636, lng: 121.22652 }, // approx
+	{ name: '喜劇開港', aliases: ['喜劇開港'], city: '高雄市', lat: 22.62156, lng: 120.28765 }, // approx
+	{ name: '覓蜜基地展演場', aliases: ['覓蜜基地'], city: '高雄市', lat: 22.74935, lng: 120.31592 }, // approx
+	{ name: '艸創心演擊樂場', aliases: ['艸創心'], city: '臺北市', lat: 25.04877, lng: 121.53002 }, // approx
+	{ name: '肆意咖啡酒館', aliases: ['肆意咖啡酒館'], city: '高雄市', lat: 22.64603, lng: 120.30307 } // approx
 ];
 
 // Build a lookup list of (matchString, venue) sorted longest-first so that more

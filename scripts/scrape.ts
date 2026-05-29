@@ -6,6 +6,7 @@
 import { writeFileSync } from 'node:fs';
 import { scrapeAll } from '../src/lib/server/scrapers/index';
 import { writeOutputs } from '../src/lib/server/output';
+import { cityFromText } from '../src/lib/server/scrapers/util';
 
 const start = Date.now();
 const { shows, report } = await scrapeAll();
@@ -25,10 +26,28 @@ console.log(
 const failures = report
 	.filter((r) => !r.ok || r.count === 0)
 	.map((r) => ({ source: r.source, error: r.ok ? 'returned 0 rows' : (r.error ?? 'unknown') }));
+
+// Venues we couldn't resolve to a city (no registry hit, no city token). These
+// likely need a new entry in src/lib/venues.ts; CI surfaces them as an issue.
+const venueCount = new Map<string, number>();
+for (const s of shows) {
+	for (const v of [s.venue, ...s.sessions.map((x) => x.venue)]) {
+		const name = v?.trim();
+		if (!name || name.length > 40) continue; // skip blanks and instruction-like blurbs
+		if (!cityFromText(name)) venueCount.set(name, (venueCount.get(name) ?? 0) + 1);
+	}
+}
+const unresolvedVenues = [...venueCount.entries()]
+	.sort((a, b) => b[1] - a[1])
+	.map(([venue, occurrences]) => ({ venue, occurrences }));
+
 writeFileSync(
 	'scrape-report.json',
-	JSON.stringify({ failures, report, total: count }, null, 2)
+	JSON.stringify({ failures, unresolvedVenues, report, total: count }, null, 2)
 );
+if (unresolvedVenues.length) {
+	console.log(`\nℹ ${unresolvedVenues.length} venue(s) could not be resolved to a city.`);
+}
 if (failures.length) {
 	console.log(`\n⚠ ${failures.length} source(s) need attention:`, failures.map((f) => f.source).join(', '));
 }

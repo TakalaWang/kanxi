@@ -49,7 +49,7 @@
 
 <!-- backdrop -->
 <div
-	class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-curtain-950/70 p-4 backdrop-blur-md sm:p-8"
+	class="fixed inset-0 z-[1200] flex items-start justify-center overflow-y-auto bg-curtain-950/70 p-4 backdrop-blur-md sm:p-8"
 	role="presentation"
 	onclick={(e) => {
 		if (e.target === e.currentTarget) onclose();

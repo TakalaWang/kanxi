@@ -32,10 +32,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- static/shows.json static/feed.xml; then
+          git add static/shows.json static/descriptions.json static/feed*.xml
+          if git diff --cached --quiet; then
             echo "No data changes."
           else
-            git add static/shows.json static/feed.xml
             git commit -m "chore: refresh show data [skip ci]"
             git push
           fi
@@ -53,3 +53,23 @@ jobs:
           if [ "$EXISTING" != "0" ]; then echo "An open alert issue already exists."; exit 0; fi
           node -e "const r=require('./scrape-report.json');const fs=require('fs');const lines=r.failures.map(f=>'- **'+f.source+'**：'+f.error).join('\n');fs.writeFileSync('issue-body.md','排程偵測到抓取異常，可能是來源網站改版或暫時無法存取：\n\n'+lines+'\n\n請檢查對應的 scraper（src/lib/server/scrapers/）。修正後關閉此 issue。\n\n_由排程自動建立。_')"
           gh issue create --title "⚠️ 抓取異常：$(date -u +%Y-%m-%d)" --label scraper-failure --body-file issue-body.md
+
+      # Surface venues we couldn't resolve to a city so a mapping can be added to
+      # src/lib/venues.ts. Reuses a single rolling issue (edit, don't spam).
+      - name: Report unmapped venues
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -f scrape-report.json || exit 0
+          COUNT=$(node -e "process.stdout.write(String((require('./scrape-report.json').unresolvedVenues||[]).length))")
+          if [ "$COUNT" = "0" ]; then echo "All venues resolved."; exit 0; fi
+          gh label create venue-unmapped --color FBCA04 --description "Venues missing from venues.ts" 2>/dev/null || true
+          node -e "const r=require('./scrape-report.json');const fs=require('fs');const top=(r.unresolvedVenues||[]).slice(0,40);const lines=top.map(v=>'- '+v.venue+'（'+v.occurrences+'）').join('\n');fs.writeFileSync('venue-body.md','以下場館無法解析到縣市，建議在 \`src/lib/venues.ts\` 補上對照（含座標）。括號為出現次數：\n\n'+lines+'\n\n_由排程自動更新；補齊後此清單會自動縮短。_')"
+          NUM=$(gh issue list --label venue-unmapped --state open --json number --jq '.[0].number // empty')
+          if [ -n "$NUM" ]; then
+            gh issue edit "$NUM" --body-file venue-body.md
+            echo "Updated venue issue #$NUM"
+          else
+            gh issue create --title "🗺️ 待補場館對照（venue mapping）" --label venue-unmapped --body-file venue-body.md
+          fi
