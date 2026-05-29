@@ -1,3 +1,7 @@
+<script module lang="ts">
+	let introPlayed = false;
+</script>
+
 <script lang="ts">
 	import { SOURCE_LABELS, type Source, type Show } from '$lib/types';
 	import ShowCard from '$lib/components/ShowCard.svelte';
@@ -35,14 +39,7 @@
 	let visible = $state(48);
 	let sentinel = $state<HTMLElement | null>(null);
 	let dark = $state(initialDark());
-	let curtain = $state(shouldShowCurtain());
-	function shouldShowCurtain(): boolean {
-		try {
-			return !sessionStorage.getItem('introShown');
-		} catch {
-			return true;
-		}
-	}
+	let curtain = $state(!introPlayed);
 
 	function cityOf(
 		city: string | null | undefined,
@@ -185,19 +182,13 @@
 
 	$effect(() => {
 		showFilters = matchMedia('(min-width: 640px)').matches;
-		let alreadyShown = false;
-		try {
-			alreadyShown = !!sessionStorage.getItem('introShown');
-		} catch {}
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches || alreadyShown) {
+		if (introPlayed || matchMedia('(prefers-reduced-motion: reduce)').matches) {
 			curtain = false;
-		} else {
-			try {
-				sessionStorage.setItem('introShown', '1');
-			} catch {}
-			const t = setTimeout(() => (curtain = false), 1900);
-			return () => clearTimeout(t);
+			return;
 		}
+		introPlayed = true;
+		const t = setTimeout(() => (curtain = false), 1900);
+		return () => clearTimeout(t);
 	});
 
 	function toggleTheme() {
