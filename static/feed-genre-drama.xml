@@ -5,7 +5,7 @@
     <link>https://onstage.takalawang.dev</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and KKTIX.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 29 May 2026 15:13:31 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 15:42:26 GMT</lastBuildDate>
     <item>
       <title>劇場在地・共創新連結-白色恐怖田調分享會(含呈現演出)</title>
       <link>https://www.accupass.com/event/2603310621312093918182</link>
@@ -20,7 +20,7 @@
       <guid isPermaLink="false">accupass:2604161917471542799416</guid>
       <pubDate>Fri, 16 Oct 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-10-17 · Source: Accupass 活動通</description>
+      <description>Date: 2026-10-17 · Venue: 1F-微光廳, 桃園市 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>2026童演童語-故事DIY-《智慧地圖包：做決定我最勇敢》</title>
@@ -455,14 +455,6 @@
       <description>Date: 2026-09-05 – 2026-09-06 · Venue: 臺北市政大樓親子劇場, 臺北市 · On sale: 2026-05-29 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
-      <title>HSINCHU COMEDY LIVE</title>
-      <link>https://www.accupass.com/event/2604161213066931123430</link>
-      <guid isPermaLink="false">accupass:2604161213066931123430</guid>
-      <pubDate>Thu, 28 May 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-05-29 · Venue: 現場馬拉桑特色餐廳三樓, 新竹市 · Source: Accupass 活動通</description>
-    </item>
-    <item>
       <title>2026新莊有好戲　一心戲劇團《Mackie 踹共沒？》</title>
       <link>https://www.opentix.life/event/2055272319005290496</link>
       <guid isPermaLink="false">opentix:2055272319005290496</guid>
@@ -805,6 +797,14 @@
       <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-09-12 – 2026-09-13 · Venue: 衛武營國家藝術文化中心歌劇院, 高雄市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
+    </item>
+    <item>
+      <title>同黨劇團《父親母親》</title>
+      <link>https://www.opentix.life/event/2051254690379628545</link>
+      <guid isPermaLink="false">opentix:2051254690379628545</guid>
+      <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-10-24 – 2026-10-25 · Venue: 衛武營國家藝術文化中心戲劇院, 高雄市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
     </item>
   </channel>
 </rss>
