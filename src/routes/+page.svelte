@@ -15,6 +15,8 @@
 	import { findVenue } from '$lib/venues';
 	import { initialDark, applyDark } from '$lib/theme';
 	import FilterDropdown from '$lib/components/FilterDropdown.svelte';
+	import SortMenu from '$lib/components/SortMenu.svelte';
+	import DateRangePicker from '$lib/components/DateRangePicker.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -31,7 +33,17 @@
 	let priceMin = $state('');
 	let priceMax = $state('');
 	let youthOnly = $state(false);
-	let sort = $state<'date-desc' | 'date-asc' | 'onsale' | 'price-asc' | 'price-desc'>('date-asc');
+	let sort = $state<
+		'date-desc' | 'date-asc' | 'enddate-asc' | 'enddate-desc' | 'price-asc' | 'price-desc'
+	>('date-asc');
+	const SORT_OPTIONS = [
+		{ value: 'date-asc', label: '演出日期早→晚' },
+		{ value: 'date-desc', label: '演出日期晚→早' },
+		{ value: 'enddate-asc', label: '結束日期早→晚' },
+		{ value: 'enddate-desc', label: '結束日期晚→早' },
+		{ value: 'price-asc', label: '票價低→高' },
+		{ value: 'price-desc', label: '票價高→低' },
+	];
 	let selected = $state<Show | null>(null);
 	let showSubscribe = $state(false);
 	let showFeedback = $state(false);
@@ -92,8 +104,10 @@
 		switch (sort) {
 			case 'date-asc':
 				return (a.startDate ?? '9999').localeCompare(b.startDate ?? '9999');
-			case 'onsale':
-				return (a.onSaleAt ?? '9999').localeCompare(b.onSaleAt ?? '9999');
+			case 'enddate-asc':
+				return (a.endDate ?? '9999').localeCompare(b.endDate ?? '9999');
+			case 'enddate-desc':
+				return (b.endDate ?? '0000').localeCompare(a.endDate ?? '0000');
 			case 'price-asc':
 				return (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity);
 			case 'price-desc':
@@ -244,8 +258,6 @@
 		}).replace(/</g, '\\u003c'),
 	);
 
-	const selectClass =
-		'rounded-full border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-700 outline-none transition hover:border-curtain-400 focus:border-curtain-500 cursor-pointer dark:border-white/15 dark:bg-white/5 dark:text-gray-200';
 	const fieldBorderless =
 		'border-0 bg-transparent py-1 text-sm text-gray-600 outline-none dark:text-gray-300';
 </script>
@@ -417,19 +429,7 @@
 					/>
 					<FilterDropdown label="售票系統" options={sourceOptions} bind:selected={activeSources} />
 
-					<span
-						class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 dark:border-white/15 dark:bg-white/5"
-					>
-						<Icon name="calendar" size={14} class="text-gray-400" />
-						<input
-							type="date"
-							bind:value={fromDate}
-							class={fieldBorderless}
-							aria-label="起始日期"
-						/>
-						<span class="text-gray-300 dark:text-gray-600">–</span>
-						<input type="date" bind:value={toDate} class={fieldBorderless} aria-label="結束日期" />
-					</span>
+					<DateRangePicker bind:from={fromDate} bind:to={toDate} />
 
 					<span
 						class="flex items-center gap-1 rounded-full border border-gray-300 bg-white py-1 pl-3 pr-2 text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400"
@@ -464,13 +464,7 @@
 						<Icon name="ticket" size={14} /> 青年席
 					</label>
 
-					<select bind:value={sort} class={selectClass} aria-label="排序">
-						<option value="date-asc">排序：演出日期早→晚</option>
-						<option value="date-desc">演出日期晚→早</option>
-						<option value="onsale">開賣時間近→遠</option>
-						<option value="price-asc">票價低→高</option>
-						<option value="price-desc">票價高→低</option>
-					</select>
+					<SortMenu bind:value={sort} options={SORT_OPTIONS} />
 				</div>
 
 				{#if hasFilters}
