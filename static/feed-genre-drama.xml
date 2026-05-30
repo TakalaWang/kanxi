@@ -5,7 +5,7 @@
     <link>https://onstage.takalawang.dev</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and KKTIX.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Sat, 30 May 2026 02:36:00 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2026 13:16:18 GMT</lastBuildDate>
     <item>
       <title>劇場在地・共創新連結-白色恐怖田調分享會(含呈現演出)</title>
       <link>https://www.accupass.com/event/2603310621312093918182</link>
@@ -92,7 +92,7 @@
       <guid isPermaLink="false">accupass:2604161601098300220570</guid>
       <pubDate>Fri, 31 Jul 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-08-01 · Source: Accupass 活動通</description>
+      <description>Date: 2026-08-01 · Venue: 龜山區公所中山天幕廣場, 桃園市 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>2026童演童語 特別活動-《勇氣選擇任務》</title>
@@ -196,7 +196,7 @@
       <guid isPermaLink="false">accupass:2604161835281289372763</guid>
       <pubDate>Sun, 05 Jul 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-07-06 · Venue: 3F-親子小學堂, 桃園市 · Source: Accupass 活動通</description>
+      <description>Date: 2026-07-06 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>西遊記誤闖黑家店</title>
@@ -245,6 +245,14 @@
       <pubDate>Fri, 26 Jun 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-06-27 · Venue: 員林演藝廳表演廳, 彰化縣 · Source: 年代售票</description>
+    </item>
+    <item>
+      <title>金車文藝講堂：河床劇團 郭文泰【擁抱無限：從劇場與藝術到 VR 360 與 XR 體驗】</title>
+      <link>https://www.accupass.com/event/2605300353471881745405</link>
+      <guid isPermaLink="false">accupass:2605300353471881745405</guid>
+      <pubDate>Fri, 26 Jun 2026 16:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-06-27 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>風城傳人夏嚇叫</title>
@@ -311,6 +319,14 @@
       <description>Date: 2026-06-14 · Venue: 一文錢。烏托邦, 臺北市 · Source: Accupass 活動通</description>
     </item>
     <item>
+      <title>傻豆騎士系列-「遙遠的美好時光」</title>
+      <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P15TPAUT</link>
+      <guid isPermaLink="false">era:P15TPAUT</guid>
+      <pubDate>Fri, 12 Jun 2026 16:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-06-13 – 2026-06-27 · Venue: 台江文化中心台江劇場, 臺南市 · Source: 年代售票</description>
+    </item>
+    <item>
       <title>丑劇大師─斯拉法《下雪了》</title>
       <link>https://tickets.udnfunlife.com/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P14XCO98</link>
       <guid isPermaLink="false">udn:P14XCO98</guid>
@@ -359,20 +375,20 @@
       <description>Date: 2026-06-06 · Venue: DIMEN5ION, 臺北市 · Source: Accupass 活動通</description>
     </item>
     <item>
-      <title>痕花劇團｜世新廣電第32屆畢業製作｜聲音劇場《第五個季節》</title>
-      <link>https://www.accupass.com/event/2605111605351433389430</link>
-      <guid isPermaLink="false">accupass:2605111605351433389430</guid>
-      <pubDate>Thu, 04 Jun 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-06-05 – 2026-06-06 · Venue: 世新大學大禮堂 三樓 良彥講堂A201, 臺北市 · Source: Accupass 活動通</description>
-    </item>
-    <item>
       <title>來福OPEN MIC 6月</title>
       <link>https://www.accupass.com/event/2605280933571722624244</link>
       <guid isPermaLink="false">accupass:2605280933571722624244</guid>
       <pubDate>Thu, 04 Jun 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-06-05 · Venue: 群島藝術園區 小劇院, 臺中市 · Source: Accupass 活動通</description>
+    </item>
+    <item>
+      <title>痕花劇團｜世新廣電第32屆畢業製作｜聲音劇場《第五個季節》</title>
+      <link>https://www.accupass.com/event/2605111605351433389430</link>
+      <guid isPermaLink="false">accupass:2605111605351433389430</guid>
+      <pubDate>Thu, 04 Jun 2026 16:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-06-05 – 2026-06-06 · Venue: 世新大學大禮堂 三樓 良彥講堂A201, 臺北市 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>嘉北國小管樂班×嘉頌重奏團《彩虹鴉》</title>
@@ -399,36 +415,12 @@
       <description>Date: 2026-05-31 · Source: Accupass 活動通</description>
     </item>
     <item>
-      <title>愛劇在一起–開心的小龍女</title>
-      <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P19XNXJO</link>
-      <guid isPermaLink="false">era:P19XNXJO</guid>
-      <pubDate>Fri, 29 May 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-05-30 · Venue: 高雄科工館南館演講廳, 高雄市 · Source: 年代售票</description>
-    </item>
-    <item>
-      <title>傻豆騎士系列-「遙遠的美好時光」</title>
-      <link>https://ticket.com.tw/application/UTK02/UTK0201_.aspx?PRODUCT_ID=P15TPAUT</link>
-      <guid isPermaLink="false">era:P15TPAUT</guid>
-      <pubDate>Fri, 29 May 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-05-30 – 2026-06-27 · Venue: 屏東藝術館, 屏東縣 · Source: 年代售票</description>
-    </item>
-    <item>
       <title>「好戲市場學・懂市場推好戲！」－2026 劇場行銷論壇</title>
       <link>https://www.accupass.com/event/2604071403031441900500</link>
       <guid isPermaLink="false">accupass:2604071403031441900500</guid>
       <pubDate>Fri, 29 May 2026 16:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-05-30 – 2026-05-31 · Venue: 兒童新樂園 DDBox, 臺北市 · Source: Accupass 活動通</description>
-    </item>
-    <item>
-      <title>一起走進故事裡：在愛裡勇敢長大</title>
-      <link>https://www.accupass.com/event/2604071630012002166211</link>
-      <guid isPermaLink="false">accupass:2604071630012002166211</guid>
-      <pubDate>Fri, 29 May 2026 16:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-05-30 · Venue: 覓蜜基地展演場, 高雄市 · Source: Accupass 活動通</description>
     </item>
     <item>
       <title>《孫臏 -終-》</title>
@@ -805,6 +797,14 @@
       <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
       <description>Date: 2026-10-24 – 2026-10-25 · Venue: 衛武營國家藝術文化中心戲劇院, 高雄市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
+    </item>
+    <item>
+      <title>【2026衛武營小時光】紅潮劇集《當亞斯遇見人魚》讀演音樂會——B面歌單</title>
+      <link>https://www.opentix.life/event/2043952009527836673</link>
+      <guid isPermaLink="false">opentix:2043952009527836673</guid>
+      <pubDate>Wed, 13 May 2026 04:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-11-18 · Venue: 衛武營國家藝術文化中心表演廳, 高雄市 · On sale: 2026-05-13 · Source: OPENTIX 兩廳院</description>
     </item>
   </channel>
 </rss>

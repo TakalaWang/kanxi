@@ -5,7 +5,7 @@
     <link>https://onstage.takalawang.dev</link>
     <description>Aggregated theatre performances from OPENTIX, udn, KHAM, ERA and KKTIX.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Sat, 30 May 2026 02:36:00 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2026 13:16:18 GMT</lastBuildDate>
     <item>
       <title>《孫臏 -終-》</title>
       <link>https://www.opentix.life/event/2056628721904320512</link>
@@ -743,14 +743,6 @@
       <description>Date: 2026-07-11 · Venue: 宜蘭演藝廳, 宜蘭縣 · On sale: 2026-04-29 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
-      <title>《天上人渣》讀劇</title>
-      <link>https://www.opentix.life/event/2047617332984160256</link>
-      <guid isPermaLink="false">opentix:2047617332984160256</guid>
-      <pubDate>Tue, 28 Apr 2026 04:00:00 GMT</pubDate>
-      <category>戲劇</category>
-      <description>Date: 2026-05-30 · Venue: 衛武營國家藝術文化中心演講廳, 高雄市 · On sale: 2026-04-28 · Source: OPENTIX 兩廳院</description>
-    </item>
-    <item>
       <title>2026夏日放／FUN時光—苗北客家流行音樂劇《那一天，彩虹出現》2026重磅回歸</title>
       <link>https://www.opentix.life/event/2045067828311797761</link>
       <guid isPermaLink="false">opentix:2045067828311797761</guid>
@@ -799,12 +791,20 @@
       <description>Date: 2026-07-03 – 2026-10-18 · Venue: 臺北市藝文推廣處城市舞台, 臺北市 · On sale: 2026-04-27 · Source: OPENTIX 兩廳院</description>
     </item>
     <item>
-      <title>《南洋過番歌》</title>
-      <link>https://www.opentix.life/event/2046191920501002241</link>
-      <guid isPermaLink="false">opentix:2046191920501002241</guid>
+      <title>Dead End 出口</title>
+      <link>https://www.opentix.life/event/2043939152403271681</link>
+      <guid isPermaLink="false">opentix:2043939152403271681</guid>
       <pubDate>Fri, 24 Apr 2026 04:00:00 GMT</pubDate>
       <category>戲劇</category>
-      <description>Date: 2026-05-30 · Venue: 恆春文化中心劇場館表演廳, 屏東縣 · On sale: 2026-04-24 · Source: OPENTIX 兩廳院</description>
+      <description>Date: 2026-06-19 – 2026-06-21 · Venue: 牯嶺街小劇場一樓實驗劇場, 臺北市 · On sale: 2026-04-24 · Source: OPENTIX 兩廳院</description>
+    </item>
+    <item>
+      <title>2026臺北兒童藝術節：《紙淘氣 逃出去》</title>
+      <link>https://www.opentix.life/event/2042425890080104449</link>
+      <guid isPermaLink="false">opentix:2042425890080104449</guid>
+      <pubDate>Fri, 24 Apr 2026 04:00:00 GMT</pubDate>
+      <category>戲劇</category>
+      <description>Date: 2026-07-02 – 2026-07-05 · Venue: 水源劇場, 臺北市 · On sale: 2026-04-24 · Source: OPENTIX 兩廳院</description>
     </item>
   </channel>
 </rss>
